@@ -1,0 +1,55 @@
+---
+/**
+ * Bewertungsleiste direkt unter dem Held (google-bewertungen.md: unter dem Held, vor jeder
+ * weiteren Aufforderung). Ohne Daten bleibt ein Link zum Google-Profil stehen, nie eine Zahl
+ * aus dem Code. Mit Daten: Schnitt, Anzahl und Stand, alles aus derselben Antwort.
+ */
+import Icon from '../Icon.astro';
+---
+<aside class="leiste" aria-label="Google-Bewertungen">
+  <div class="inhalt--weit leiste__innen">
+    <p class="leiste__text" data-leiste-text>
+      <Icon name="google" />
+      <span>Was Gäste über Haus Witte schreiben:</span>
+    </p>
+    <a class="leiste__link" href="#bewertungen" data-leiste-link>Bewertungen lesen<Icon name="pfeil-rechts" /></a>
+  </div>
+</aside>
+
+<style>
+  .leiste {
+    background: var(--farbe-flaeche);
+    border-block-end: 1px solid var(--farbe-rahmen);
+  }
+  .leiste__innen {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    gap: var(--raum-2) var(--raum-6);
+    padding-block: var(--raum-4);
+    min-height: 4.5rem;
+  }
+  .leiste__text { display: flex; align-items: center; gap: var(--raum-3); margin: 0; max-width: none; font-weight: 600; }
+  .leiste__text :global(.icon) { color: var(--farbe-marke-text); }
+  .leiste__text :global(.sterne) { color: var(--farbe-akzent); letter-spacing: 0.08em; }
+  .leiste__text :global(.leise) { font-weight: 400; color: var(--farbe-text-leise); }
+  .leiste__link { display: inline-flex; align-items: center; gap: var(--raum-2); font-weight: 600; text-decoration: none; min-height: 2.75rem; }
+</style>
+
+<script>
+  import { laden, zahl, datum } from '../../scripts/bewertungen';
+  const text = document.querySelector<HTMLElement>('[data-leiste-text] span');
+  laden().then((d) => {
+    if (!d || !text) return;
+    const voll = Math.round(d.schnitt);
+    text.textContent = '';
+    const s = document.createElement('span');
+    s.className = 'sterne';
+    s.setAttribute('aria-hidden', 'true');
+    s.textContent = '★'.repeat(voll) + '☆'.repeat(5 - voll);
+    const wert = document.createElement('span');
+    wert.textContent = ` ${zahl(d.schnitt)} von 5 bei ${zahl(d.anzahl, 0)} Google-Bewertungen `;
+    const stand = document.createElement('span');
+    stand.className = 'leise';
+    stand.textContent = `(Stand ${datum(d.stand)})`;
+    text.append(s, wert, stand);
+  });
+</script>
