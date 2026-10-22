@@ -1,24 +1,49 @@
 # Bilder: Inventar und Bedarf
 
-Alle Bilder in `src/assets/bilder/` sind **aus Screenshots der Bestandsseite ausgeschnitten**,
-weil die Seite aus der Arbeitsumgebung nicht abrufbar war. Sie sind nur Zwischenstand und vor
-dem Livegang durch die Originale zu ersetzen (gleicher Dateiname, dann baut Astro neu).
+Grundlage sind die Fotos, die der Kunde am 22.10.2026 in das Repository hochgeladen hat
+(43 Dateien). Die verwendeten liegen mit sprechendem Namen in `src/assets/bilder/`, alle
+übrigen unverändert in `bilder-kunde/` (Originalnamen aus dem Upload). Astro erzeugt beim Build
+AVIF und WebP in passenden Breiten.
 
-| Datei | Motiv | Größe jetzt | Einsatz | Bedarf |
-|---|---|---|---|---|
-| `gastraum-weinwand.png` | Gastraum mit Weinwand, rote Wände | 268 x 160 | Haus, Bild 1 von 4 | Original, mind. 1600 px breit |
-| `sitznische-bar.png` | rote Lederbank vor der Bar | 269 x 160 | Haus, Bild 2 von 4 | Original, mind. 1200 px |
-| `steinboegen.png` | Natursteinbögen, Blick durch den Raum | 268 x 160 | Haus, Bild 3 von 4 | Original, mind. 1200 px |
-| `stier.png` | Stierskulptur | 268 x 161 | Haus, Bild 4 von 4 | Original, mind. 1200 px |
-| `fassade.png` | Altbaufassade Ückendorfer Straße | 268 x 160 | Anfahrt | Original, mind. 1200 px |
-| `steak-holzkohle.png` | aufgeschnittenes Steak mit Tomate | 460 x 382 | Held | nur der rechte Ausschnitt ohne den eingebrannten Schriftzug „THE BEST SINCE 1999“ der alten Seite. Original ohne Text nötig, Rechte klären (Verdacht Stockfoto), besser eigenes Foto vom Grill |
-| `mittagsteller.png` | Steak mit Pommes | 777 x 258 | Speisen: Mittagstisch | Rechte klären, Original |
-| `palatschinken.png` | Palatschinken mit Kirschen | 936 x 311 | Speisen: Desserts | Rechte klären (Verdacht Stockfoto) |
-| `logo-haus-witte.png` | Logo | 163 x 116 | Kopf, Fuß | SVG oder PNG ab 800 px |
+## Verwendet
 
-**Die vier Bilder für die Galerie** (Wunsch „Top 4"): Gastraum mit Weinwand, Sitznische vor der
-Bar, Natursteinbögen, Stier. Auswahl der Agentur: sie zeigen zusammen Raum, Platz am Tisch,
-Material und das Wahrzeichen des Hauses. Die Fassade läuft separat bei der Anfahrt.
+| Datei | Herkunft (Upload) | Größe | Einsatz |
+|---|---|---|---|
+| `fassade-nacht.webp` | `unnamed (4).webp` | 1360 x 766 | Held, Vollbild |
+| `steak-heisser-stein.webp` | Ausschnitt aus `unnamed (2).webp` | 1320 x 548 | Speisen: Steaks. Oberer Teil mit den Gästen abgeschnitten |
+| `salatbar.webp` | `unnamed (18).webp` | 1360 x 1020 | Speisen: Mittagstisch |
+| `bar-samtbank.webp` | `unnamed (15).webp` | 1360 x 1020 | Haus, Bild 1 von 4 |
+| `natursteinboegen.webp` | `unnamed (8).webp` | 1360 x 1020 | Haus, Bild 2 von 4 |
+| `weinwand-bogen.webp` | `unnamed (26).webp` | 1360 x 1020 | Haus, Bild 3 von 4 |
+| `stier.webp` | `unnamed (16).webp` | 1360 x 1020 | Haus, Bild 4 von 4 |
+| `fassade-tag.jpg` | `images.jpg` | 499 x 300 | Anfahrt |
+| `wortmarke-haus-witte-hell.png` | aus `628456627_…_n.jpg` freigestellt | 1080 x 277 | Deckblatt der Speisekarte, Fuß |
+| `logo-haus-witte.png` | Screenshot der alten Seite | 163 x 116 | Kopfleiste |
+| `palatschinken.png` | Screenshot der alten Seite | 936 x 311 | Speisen: Desserts |
 
-**Fehlt ganz:** ein Foto vom Holzkohlengrill selbst, ein Foto vom Team oder von der Küche,
-Fotos echter Gerichte aus dem Haus. Kein Stock- oder KI-Bild an diese Stellen.
+**Die vier Bilder fürs Haus („Top 4"):** Bar mit roter Samtbank, Natursteinbögen, Weinwand im
+Bogen, Stier. Grund: zusammen zeigen sie Platz am Tisch, Raum, Material und das Wahrzeichen des
+Hauses, und alle vier liegen in 1360 px vor.
+
+## Bewusst nicht verwendet
+
+| Upload | Grund |
+|---|---|
+| `unnamed (24).webp` | zwei Kinder am Tisch erkennbar. Fotos von Kindern nur mit Einwilligung der Eltern |
+| `unnamed (27).webp` | Gäste und Kellner erkennbar. Nur mit Einwilligung der abgebildeten Personen |
+| `unnamed (2).webp` (oberer Teil) | Gäste am Tisch, deshalb nur der untere Ausschnitt |
+| `images (1).jpg` | wirkt wie ein Stockfoto (Steak mit Rosmarin), Herkunft unklar |
+| `unnamed.jpg`, `unnamed (1).jpg`, `unnamed (2).jpg` | Vorschaubilder unter 250 px |
+| `unnamed (13).webp`, `unnamed (15).webp` (Ausschnitt) | Champagnermarke groß im Bild; die Bar bleibt, weil die Marke dort Nebensache ist |
+
+Weitere gute Motive für später: `unnamed (11).webp` (Fassade bei Nacht hochkant, für Mobil),
+`unnamed (1).webp` (Grillplatte), `unnamed (5).webp` (Schnitzel mit Kroketten), `unnamed (14).webp`
+und `unnamed (19).webp` (Salatbar), `unnamed (29).webp` (Lounge), `unnamed (30).webp` (Bögen
+und Theke), `unnamed (21).webp` (Weinbogen).
+
+## Offen
+
+* Rechte an den Fotos bestätigen lassen (wer hat fotografiert, darf die Seite sie zeigen).
+* Logo als SVG oder in hoher Auflösung, das Rasterlogo im Kopf ist nur 163 px breit.
+* Dessertfoto stammt von der alten Seite und wirkt wie ein Stockfoto: eigenes Foto oder Rechte klären.
+* Kein Foto vom Holzkohlengrill selbst. Kein Stock- oder KI-Bild an diese Stelle.

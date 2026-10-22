@@ -2,12 +2,13 @@
 /**
  * Speisen: drei Angebote mit klarer Rangfolge. Das Steak ist gross, Mittagstisch und Dessert
  * kleiner daneben, statt drei gleich breiter Karten (26-geschmack-und-ki-tells.md, Abschnitt 5).
- * Die Steakkarte ist eine Holzkohlefläche mit Glut und ohne Foto: das Steakfoto steht schon im
- * Held, ein zweites ohne eingebrannten Schriftzug gibt es nicht.
+ * Fotos aus dem Upload des Kunden: Steak auf dem heißen Stein (Ausschnitt ohne die Gäste),
+ * die Salatbar des Mittagstischs. Das Dessertfoto stammt von der alten Seite (Rechte klären).
  * Jede Karte springt zur passenden Seite der Speisekarte (data-karte-seite).
  */
 import { Picture } from 'astro:assets';
-import mittag from '../../assets/bilder/mittagsteller.png';
+import steak from '../../assets/bilder/steak-heisser-stein.webp';
+import salatbar from '../../assets/bilder/salatbar.webp';
 import dessert from '../../assets/bilder/palatschinken.png';
 import Icon from '../Icon.astro';
 
@@ -17,8 +18,8 @@ const karten = [
     titel: 'Steaks vom Holzkohlengrill',
     text: 'Rindfleisch ausschließlich von Black Ranch aus Argentinien, über Holzkohle gegrillt.',
     vorschlag: true,
-    bild: null,
-    alt: '',
+    bild: steak,
+    alt: 'Gegrilltes Rindersteak auf dem heißen Stein, dazu Kartoffelspalten, Pommes frites, Rahmspinat, Champignons und drei Saucen',
     link: 'Steaks in der Karte',
     seite: 'steaks',
     gross: true,
@@ -28,8 +29,8 @@ const karten = [
     titel: 'Mittagstisch',
     text: 'Zu unseren Mittagsgerichten servieren wir eine Tagessuppe und Sie dürfen sich an unserer reichhaltigen Salat-Bar bedienen. Die Mittagskarte wechselt monatlich.',
     vorschlag: false,
-    bild: mittag,
-    alt: 'Teller mit Steak, Pommes frites und Kräuterbutter',
+    bild: salatbar,
+    alt: 'Salatbar im Gastraum, Theke mit dem Schriftzug Steakhouse Haus Witte',
     link: 'Zur Mittagskarte',
     seite: 'mittagskarte',
     gross: false,
@@ -56,20 +57,17 @@ const karten = [
     <div class="speisen__raster">
       {karten.map((k) => (
         <article class:list={['speise', 'hebt', { 'speise--gross': k.gross }]}>
-          {k.bild ? (
-            <div class="speise__bild zoomt">
-              <Picture
-                src={k.bild}
-                formats={['avif', 'webp']}
-                widths={[400, 777]}
-                sizes="(min-width: 861px) 38vw, 92vw"
-                alt={k.alt}
-                loading="lazy"
-              />
-            </div>
-          ) : (
-            <div class="speise__glut" aria-hidden="true"></div>
-          )}
+          <div class="speise__bild zoomt">
+            <Picture
+              fallbackFormat="webp"
+              src={k.bild}
+              formats={['avif', 'webp']}
+              widths={k.gross ? [640, 960, 1320] : [480, 777]}
+              sizes={k.gross ? '(min-width: 1360px) 1320px, 94vw' : '(min-width: 861px) 46vw, 92vw'}
+              alt={k.alt}
+              loading="lazy"
+            />
+          </div>
           <div class="speise__text">
             <h3>{k.titel}</h3>
             <p data-copy-vorschlag={k.vorschlag ? '' : undefined}>{k.text}</p>
@@ -104,38 +102,38 @@ const karten = [
     overflow: hidden;
   }
   .speise__bild { aspect-ratio: 16 / 9; background: var(--farbe-flaeche-alt); }
+  .speise__bild :global(picture), .speise__bild :global(img) { width: 100%; height: 100%; }
+  .speise__bild :global(img) { object-fit: cover; }
+  .speise--gross .speise__bild :global(img) { object-position: 45% 70%; }
 
-  /* Steakkarte: Holzkohle mit Glut, Text unten, große Schrift */
+  /* Steakkarte: Foto als Fläche, Text unten links auf Holzkohleverlauf */
   .speise--gross {
     isolation: isolate;
     justify-content: flex-end;
-    min-height: 18rem;
     background: var(--farbe-flaeche-dunkel);
     border-color: var(--farbe-flaeche-dunkel);
     color: var(--farbe-text-invers);
     --farbe-fokus: var(--farbe-marke-auf-dunkel);
   }
-  .speise__glut {
-    position: absolute; inset: 0; z-index: -1;
-    background: var(--verlauf-glut);
-    transition: opacity var(--dauer-normal) var(--kurve);
-    opacity: 0.8;
+  /* schmal: Foto oben, Text darunter auf Holzkohle, damit nichts über hellen Tellern steht */
+  .speise--gross { min-height: 0; }
+  .speise--gross .speise__bild { aspect-ratio: 16 / 9; }
+  /* breit: Text links auf eigener Holzkohlefläche, das Steak rechts frei sichtbar */
+  @media (min-width: 861px) {
+    .speise--gross { justify-content: center; min-height: clamp(22rem, 38vw, 34rem); }
+    .speise--gross .speise__bild { position: absolute; inset: 0 0 0 34%; z-index: -2; aspect-ratio: auto; }
+    .speise--gross::before {
+      content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+      background: linear-gradient(to right, var(--farbe-flaeche-dunkel) 0%, var(--farbe-flaeche-dunkel) 34%, color-mix(in oklab, var(--farbe-flaeche-dunkel) 40%, transparent) 46%, transparent 60%), var(--verlauf-glut);
+    }
+    .speise--gross .speise__text { max-width: 40%; }
   }
-  .speise--gross:hover .speise__glut { opacity: 1; }
   .speise--gross .speise__text { padding: var(--raum-8); gap: var(--raum-4); }
-  .speise--gross .speise__text p { color: var(--farbe-text-invers-leise); font-size: var(--text-lg); max-width: 30rem; }
+  .speise--gross .speise__text p { color: var(--farbe-text-invers); font-size: var(--text-lg); max-width: 30rem; }
   .speise--gross .speise__link { color: var(--farbe-marke-auf-dunkel); }
-  .speise__bild :global(picture), .speise__bild :global(img) { width: 100%; height: 100%; }
-  .speise__bild :global(img) { object-fit: cover; }
-
   .speise__text { padding: var(--raum-6); display: grid; gap: var(--raum-3); }
   .speise__text h3 { margin: 0; }
-  .speise--gross .speise__text h3 { font-size: var(--text-h1); }
-  @media (min-width: 861px) {
-    /* breit: Ueberschrift links, Text und Link rechts */
-    .speise--gross .speise__text { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: end; column-gap: var(--raum-spalte); }
-    .speise--gross .speise__text h3 { grid-row: span 2; }
-  }
+  .speise--gross .speise__text h3 { font-size: var(--text-h2); }
   .speise__text p { margin: 0; color: var(--farbe-text-leise); }
 
   .speise__link {

@@ -19,6 +19,10 @@ Social Media nur als Verlinkung (keine Einbettung), die vier besten Bilder.
 
 Markenbrief: `docs/marke-brief.md`, Werte: `docs/marke.json`, Bilder: `docs/BILDER.md`.
 
+Bilder des Kunden: der Upload liegt in `bilder-kunde/` (Originalnamen), die verwendeten mit
+sprechendem Namen in `src/assets/bilder/`. Fotos mit erkennbaren Personen werden nicht
+verwendet, solange keine Einwilligung vorliegt (Liste in `docs/BILDER.md`).
+
 ## Stack und Befehle
 
 Astro 7 (statisch) mit `@astrojs/cloudflare` 14, Node 24 LTS, pnpm. GSAP ist installiert,
@@ -49,6 +53,53 @@ Version 13 baut nur noch für Workers. Konfiguration in `wrangler.jsonc`. Deploy
 Die KV-Namespaces stehen ohne ID in `wrangler.jsonc`, Wrangler legt sie beim ersten Deploy an.
 Keine IDs erfinden.
 
+## Formulare und Datenfluss
+
+Reservierung: `POST /api/reservierung` (Serverroute, `prerender = false`). Reihenfolge:
+Konfiguration, Origin, Honigtopf `webadresse`, Zeitfeld, Turnstile, Prüfung, Rate Limit, zwei
+Mails über Resend (intern an `MAIL_TO`, Bestätigung an den Gast). **Keine Speicherung**, kein
+Leadsystem beauftragt. Die Anfrage ist keine feste Buchung; das steht im Formular und in der
+Mail. Ohne JavaScript leitet die Route auf `/reservierung-gesendet` weiter (mit `?fehler=`).
+Mittwoch lehnt die Prüfung ab, mit Hinweis auf Feiertage und Telefon. Mehr als 12 Personen:
+telefonisch. Allergien werden bewusst nicht abgefragt (Gesundheitsdaten).
+
+Astro 7 prüft Cross-Site-POSTs selbst (`Cross-site POST form submissions are forbidden`), die
+eigene Origin-Prüfung bleibt zusätzlich.
+
+Bewertungen: `GET /api/bewertungen` holt Google Places serverseitig, Cache 24 h in KV, letzter
+Stand als Rückfall. Ohne Schlüssel oder Place ID antwortet sie 503, die Seite zeigt dann nur
+Links zum Profil. Keine Zahl im Code, kein JSON-LD mit Bewertung (die Seite ist statisch).
+
+Getestet am 22.10.2026 in der Worker-Vorschau (`astro preview`): fehlende Variablen (503 mit
+Telefon), fremde Herkunft (403), Honigtopf (200 ohne Versand), Weiterleitung ohne JavaScript
+(303). Nicht getestet: echter Versand über Resend und echte Turnstile-Prüfung (Netz der
+Arbeitsumgebung gesperrt). Gefunden und behoben: ein nicht erreichbares Turnstile führte zu
+einem 500er, jetzt eine Meldung mit Telefon.
+
+Lokal testen: `.dev.vars` mit den Variablen anlegen (nie einchecken) und für `astro preview`
+nach `dist/server/.dev.vars` kopieren.
+
+## Umgebungsvariablen
+
+| Name | Zweck | Fehlt sie |
+|---|---|---|
+| `PUBLIC_SITE_URL` | Domain für canonical, OG, Sitemap | Rückfall `https://steakhouse-hauswitte.de` |
+| `RESEND_API_KEY` (Secret) | Mailversand | Formular meldet „nicht möglich" mit Telefon |
+| `MAIL_TO` | Empfänger im Restaurant | wie oben |
+| `MAIL_FROM` | verifizierter Absender bei Resend | wie oben |
+| `TURNSTILE_SECRET_KEY` (Secret) | Spamschutz serverseitig | in Produktion wird jede Anfrage abgewiesen |
+| `PUBLIC_TURNSTILE_SITE_KEY` | Widget, wird erst beim ersten Fokus ins Formular geladen | kein Widget, Server weist ab |
+| `GOOGLE_PLACES_API_KEY` (Secret) | Bewertungsabruf | nur Links zum Profil |
+| `PUBLIC_GOOGLE_PLACE_ID` | Place ID von Haus Witte, auch für „Bewertung schreiben" | nur Links zum Profil |
+
+## Consent und eingesetzte Dienste
+
+Kein Consent Banner und kein Link „Cookie Einstellungen": die Seite nutzt nur notwendige
+Technik (Cloudflare, selbst gehostete Schriften, Turnstile erst bei Benutzung des Formulars,
+Bewertungen über die eigene Route). Google Maps, Facebook und Instagram sind nur verlinkt.
+Kommt ein einwilligungspflichtiger Dienst dazu, kommen Banner und Footerlink aus den
+Skill-Vorlagen mit.
+
 ## Seitenstruktur
 
 Eine Startseite mit Sprungmarken (`#speisen`, `#speisekarte`, `#haus`, `#bewertungen`,
@@ -77,10 +128,16 @@ Tokens in `src/styles/tokens.css`, abgeleitet aus `docs/marke.json`. Globale Bas
 | `src/components/Fuss.astro` | Kontakt, Öffnungszeiten, Social Links, Pflichtlinks |
 | `src/components/Icon.astro` | eigenes Icon-Set, Linie 2 px |
 | `src/data/betrieb.ts` | Name, Adresse, Telefon, Öffnungszeiten, Social: einzige Quelle für NAP |
-| `src/components/sektionen/Held.astro` | Held, Holzkohle mit Glut, Steakfoto rechts (Grund im Kopfkommentar) |
-| `src/components/sektionen/Speisen.astro` | Steak groß als Glutfläche, Mittagstisch und Desserts mit Foto, Sprung in die Karte |
+| `src/components/sektionen/Held.astro` | Held, Vollbild der Fassade bei Nacht, Text unten links |
+| `src/components/sektionen/BewertungsLeiste.astro` | Leiste unter dem Held, Google-Schnitt live oder Link |
+| `src/components/sektionen/Speisen.astro` | Steak groß (Text links, Foto rechts), Mittagstisch mit Salatbar, Desserts |
 | `src/components/sektionen/Qualitaet.astro` | gelieferter Text zu Black Ranch, drei Merkmale |
-| `src/components/sektionen/Haus.astro` | die vier Bilder, versetzt |
+| `src/components/sektionen/Haus.astro` | die vier Bilder: Bar breit, darunter Bögen, Weinwand, Stier |
+| `src/components/sektionen/Bewertungen.astro` | Google-Bewertungen über `/api/bewertungen`, ohne Daten nur Links |
+| `src/components/sektionen/Reservierung.astro` | Reservierungsanfrage, Öffnungszeiten, Telefon |
+| `src/components/sektionen/Anfahrt.astro` | Adresse, Route (Link), Social Media nur verlinkt |
+| `src/lib/reservierung-pruefung.ts` | eine Prüfregel für Browser und Server (Datum, Ruhetag, Personen) |
+| `src/lib/mail-template.ts` | interne Mail und Bestätigung an den Gast |
 | `src/components/sektionen/Speisekarte.astro` | Speisekarte als Buch (eigener Abschnitt, Signaturbewegung), Daten aus `src/data/speisekarte.ts` |
 
 ### Speisekarte als Buch
@@ -98,7 +155,7 @@ bleibt die letzte Rückseite leer. Sprung aus anderen Sektionen: `data-karte-sei
 
 ## Stand
 
-Phase 1 bis 4 abgeschlossen. Weitere Phasen folgen, siehe Änderungsverlauf.
+Phase 1 bis 5 abgeschlossen. Weitere Phasen folgen, siehe Änderungsverlauf.
 
 ## Offene Punkte
 
@@ -123,3 +180,9 @@ vollständige Speisekarte, Öffnungszeiten bestätigen, Social-Media-Adressen, P
 - **22.10.2026** Phase 4: Speisekarte als Buch mit Deckblatt, Mittagskarte (sechs Gerichte mit
   Preisen aus dem Screenshot), Steaks und Beilagen (fehlen, als FEHLT markiert), Desserts (neun
   Gerichte, Preise fehlen), Rückseite mit Ruhetag. Kapitelleiste, Sprünge aus den Speisen.
+- **22.10.2026** Phase 5: Reservierung (Route, Mails, vier Zustände, ohne JavaScript nutzbar),
+  Google-Bewertungen (Route mit KV-Cache, Leiste unter dem Held, Sektion), Anfahrt und Social
+  Media nur als Links. Auf Wunsch des Nutzers die hochgeladenen Fotos eingebaut: Held jetzt
+  Vollbild der Fassade bei Nacht, Steak auf dem heißen Stein, Salatbar, vier neue Bilder fürs
+  Haus, Wortmarke auf Speisekarte und Fuß. Die Ausschnitte aus Screenshots sind entfernt,
+  bis auf Logo und Dessertfoto. Upload nach `bilder-kunde/` verschoben.

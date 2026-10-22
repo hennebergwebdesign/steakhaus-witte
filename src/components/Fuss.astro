@@ -5,7 +5,9 @@
  * kein Banner (consent-und-dienste.md). Kommt ein einwilligungspflichtiger Dienst dazu,
  * kommen Banner und Link mit.
  */
+import { Image } from 'astro:assets';
 import Icon from './Icon.astro';
+import wortmarke from '../assets/bilder/wortmarke-haus-witte-hell.png';
 import { betrieb, oeffnungszeiten, social } from '../data/betrieb';
 
 const jahr = new Date().getFullYear();
@@ -14,6 +16,7 @@ const jahr = new Date().getFullYear();
   <div class="fuss__glut" aria-hidden="true"></div>
   <div class="fuss__innen inhalt--weit">
     <div class="fuss__marke">
+      <Image class="fuss__marke" src={wortmarke} alt="" widths={[360, 720]} sizes="18rem" loading="lazy" />
       <p class="fuss__name">{betrieb.name}</p>
       <p class="fuss__zeile">Steaks vom Holzkohlengrill in Gelsenkirchen-Ückendorf, seit {betrieb.seit}.</p>
     </div>
@@ -87,7 +90,8 @@ const jahr = new Date().getFullYear();
   @media (min-width: 640px) { .fuss__innen { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (min-width: 1100px) { .fuss__innen { grid-template-columns: 1.4fr 1fr 1.3fr 1fr; } }
 
-  .fuss__name { font-family: var(--schrift-display); font-size: var(--text-h3); font-weight: 700; line-height: var(--zeilenhoehe-eng); margin-block-end: var(--raum-3); }
+  .fuss__marke { width: min(18rem, 100%); height: auto; margin-block-end: var(--raum-6); }
+  .fuss__name { font-family: var(--schrift-display); font-size: var(--text-h4); font-weight: 700; line-height: var(--zeilenhoehe-eng); margin-block-end: var(--raum-3); }
   .fuss__zeile { color: var(--farbe-text-invers-leise); }
   .fuss__titel {
     font-family: var(--schrift-text); font-size: var(--text-sm); font-weight: 600;

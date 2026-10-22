@@ -1,16 +1,28 @@
 ---
 /**
- * Held: Holzkohle mit Glut von unten, Überschrift links, das Steak rechts als gerahmtes Bild.
- * Gewohnheitsfrage (26, Abschnitt 4) bewusst beantwortet: Text links und Bild rechts, weil das
- * einzige Steakfoto ohne eingebrannten Schriftzug nur 460 x 382 px groß ist. Als Vollbild oder
- * Band wäre es unscharf. Mit einem Originalfoto vom Grill wird der Held zum Vollbild mit Text
- * unten links. Höhe 100svh ist harte Grenze; es passt sich der Inhalt an, nie der Container.
+ * Held: Vollbild der Fassade bei Nacht mit der Leuchtschrift, Text unten links auf einem
+ * Verlauf aus Holzkohle. Grund: das Haus an der Ückendorfer Straße ist das, was Stammgäste
+ * wiedererkennen und Neue suchen; kein anderes Steakhaus hat dieses Bild (Tauschtest).
+ * Das Steak folgt direkt in der nächsten Sektion. Höhe 100svh ist harte Grenze.
+ * Bild 1360 x 766 px aus dem Upload des Kunden (bilder-kunde, unnamed (4).webp).
  */
 import { Picture } from 'astro:assets';
-import steak from '../../assets/bilder/steak-holzkohle.png';
+import fassade from '../../assets/bilder/fassade-nacht.webp';
 import { betrieb } from '../../data/betrieb';
 ---
 <section class="held" aria-labelledby="held-titel">
+  <div class="held__bild">
+    <Picture
+      fallbackFormat="webp"
+      src={fassade}
+      formats={['avif', 'webp']}
+      widths={[640, 960, 1360]}
+      sizes="100vw"
+      alt="Haus Witte bei Nacht: Altbaufassade mit beleuchteten Rundbogenfenstern und der Leuchtschrift Steakhouse Haus Witte Restaurant"
+      loading="eager"
+      fetchpriority="high"
+    />
+  </div>
   <div class="held__glut" aria-hidden="true"></div>
   <div class="held__innen inhalt--weit">
     <div class="held__text">
@@ -23,18 +35,6 @@ import { betrieb } from '../../data/betrieb';
         <a class="btn btn--zweit" href="#speisekarte">Speisekarte ansehen</a>
       </div>
     </div>
-
-    <figure class="held__bild">
-      <Picture
-        src={steak}
-        formats={['avif', 'webp']}
-        widths={[460]}
-        sizes="(min-width: 1100px) 460px, 92vw"
-        alt="Aufgeschnittenes, rosa gegrilltes Rindersteak mit Tomate und Pfefferkörnern auf dunklem Holz"
-        loading="eager"
-        fetchpriority="high"
-      />
-    </figure>
   </div>
 </section>
 
@@ -46,63 +46,58 @@ import { betrieb } from '../../data/betrieb';
     /* harte Grenze: volle sichtbare Höhe, die sticky Kopfleiste eingerechnet */
     min-height: calc(100svh - var(--hoehe-kopf));
     display: flex;
+    align-items: flex-end;
     background: var(--farbe-flaeche-dunkel);
     color: var(--farbe-text-invers);
     --farbe-fokus: var(--farbe-marke-auf-dunkel);
   }
+  .held__bild { position: absolute; inset: 0; z-index: -2; }
+  .held__bild :global(picture), .held__bild :global(img) { width: 100%; height: 100%; }
+  .held__bild :global(img) { object-fit: cover; object-position: 60% 40%; }
+
+  /*
+    Lesbarkeit: Holzkohle von unten links, darüber die Glut. Der Text steht nur auf der
+    abgedunkelten Fläche (unter 15 % Restbild), damit 4,5:1 auch über den Fenstern hält.
+  */
   .held__glut {
-    position: absolute; inset: 0; z-index: -1;
-    background: var(--verlauf-glut);
-    pointer-events: none;
+    position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      linear-gradient(to top, var(--farbe-flaeche-dunkel) 0%, color-mix(in oklab, var(--farbe-flaeche-dunkel) 88%, transparent) 30%, color-mix(in oklab, var(--farbe-flaeche-dunkel) 35%, transparent) 62%, transparent 85%),
+      linear-gradient(to right, color-mix(in oklab, var(--farbe-flaeche-dunkel) 70%, transparent) 0%, transparent 60%),
+      var(--verlauf-glut);
   }
-  .held__innen {
-    display: grid;
-    align-content: center;
-    gap: var(--raum-block);
-    padding-block: var(--raum-block);
-  }
-  @media (min-width: 1100px) {
-    .held__innen { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); align-items: center; }
-  }
-  .held__titel { font-size: var(--text-held); margin-block-end: var(--raum-6); }
+  .held__innen { padding-block: var(--raum-block); }
+  .held__text { max-width: 54rem; }
+  .held__titel { font-size: var(--text-held); margin-block-end: var(--raum-6); text-shadow: 0 2px 24px rgb(0 0 0 / 0.5); }
   .held__unterzeile {
     font-size: var(--text-lg);
-    color: var(--farbe-text-invers-leise);
+    color: var(--farbe-text-invers);
     max-width: 36rem;
     margin-block-end: var(--raum-8);
   }
   .held__aktionen { display: flex; flex-wrap: wrap; gap: var(--raum-3); }
 
-  .held__bild {
-    margin: 0;
-    width: 100%;
-    max-width: 460px;
-    justify-self: center;
-    border-radius: var(--radius-m);
-    overflow: hidden;
-    box-shadow: var(--schatten-buch);
-    /* leicht gedreht wie ein aufgelegtes Foto, die Glut liegt dahinter */
-    rotate: 2deg;
-  }
-  .held__bild :global(img) { width: 100%; height: auto; }
-  @media (max-width: 1099px) {
-    .held__bild { rotate: none; max-width: 32rem; justify-self: start; }
-  }
   @media (max-width: 640px) {
-    .held__bild { aspect-ratio: 16 / 10; }
-    .held__bild :global(img) { height: 100%; object-fit: cover; }
+    .held__bild :global(img) { object-position: 55% 30%; }
+  }
+  /* Der Mobilbalken liegt fest unten: die Knöpfe im Held dürfen nicht darunter verschwinden */
+  @media (max-width: 860px) {
+    .held__innen { padding-block-end: calc(var(--raum-block) + var(--hoehe-mobilbalken)); }
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .held__text > *, .held__bild {
-      animation: held-ein var(--dauer-lang) var(--kurve-eintritt) both;
-    }
+    .held__text > * { animation: held-ein var(--dauer-lang) var(--kurve-eintritt) both; }
     .held__unterzeile { animation-delay: 80ms; }
     .held__aktionen { animation-delay: 160ms; }
-    .held__bild { animation-delay: 240ms; }
+    .held__bild :global(img) { animation: held-bild var(--dauer-sequenz) var(--kurve-eintritt) both; }
   }
   @keyframes held-ein {
     from { opacity: 0; translate: 0 var(--weg-gross); }
     to { opacity: 1; translate: 0 0; }
+  }
+  /* Das Bild setzt sich ruhig ab, wie das Licht beim Betreten */
+  @keyframes held-bild {
+    from { opacity: 0.4; scale: 1.04; }
+    to { opacity: 1; scale: 1; }
   }
 </style>

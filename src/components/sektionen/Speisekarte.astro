@@ -13,7 +13,9 @@
  * Ab 1100 px eine Doppelseite mit 3D-Umblaettern, darunter eine Seite, die beim Wechsel umschlaegt.
  * Aufbau: je zwei Seiten bilden ein Blatt (Vorderseite, Rueckseite).
  */
+import { Image } from 'astro:assets';
 import Icon from '../Icon.astro';
+import wortmarke from '../../assets/bilder/wortmarke-haus-witte-hell.png';
 import { seiten, preis, kapitel } from '../../data/speisekarte';
 import { betrieb } from '../../data/betrieb';
 
@@ -53,9 +55,7 @@ const gesamt = seiten.length;
                 >
                   {seite.art === 'deckel' && (
                     <div class="deckel">
-                      <p class="deckel__name">Haus Witte</p>
-                      <p class="deckel__linie" aria-hidden="true"></p>
-                      <p class="deckel__zeile">Steakhouse · Holzkohlengrill</p>
+                      <Image class="deckel__marke" src={wortmarke} alt="Haus Witte, Steakhouse, Holzkohlengrill" widths={[480, 960]} sizes="(min-width: 1100px) 26rem, 80vw" loading="lazy" />
                       <p class="deckel__titel">Speisekarte</p>
                       <p class="deckel__seit">seit {betrieb.seit}</p>
                     </div>
@@ -181,6 +181,7 @@ const gesamt = seiten.length;
     padding: var(--raum-8);
   }
   .deckel p { margin: 0; max-width: none; }
+  .deckel__marke { width: 100%; max-width: 26rem; height: auto; }
   .deckel__name { font-family: var(--schrift-display); font-weight: 700; font-size: var(--text-h1); line-height: var(--zeilenhoehe-eng); }
   .deckel__linie { width: 60%; height: 2px; background: var(--rot-300); }
   .deckel__zeile { font-family: var(--schrift-display); font-weight: 600; font-size: var(--text-h4); }

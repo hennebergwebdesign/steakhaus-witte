@@ -5,7 +5,7 @@
  * Facebook oder Instagram, bevor jemand klickt, und braucht kein Consent Banner.
  */
 import { Image } from 'astro:assets';
-import fassade from '../../assets/bilder/fassade.png';
+import fassade from '../../assets/bilder/fassade-tag.jpg';
 import Icon from '../Icon.astro';
 import { betrieb, social } from '../../data/betrieb';
 ---
@@ -15,7 +15,7 @@ import { betrieb, social } from '../../data/betrieb';
       <h2 id="anfahrt-titel">Anfahrt</h2>
       <div class="anfahrt__karte">
         <div class="anfahrt__bild">
-          <Image src={fassade} alt="Altbaufassade von Haus Witte mit Rundbogenfenstern und Schriftzug Steakhouse Restaurant" widths={[268]} sizes="268px" loading="lazy" />
+          <Image src={fassade} alt="Haus Witte bei Tag: hellgraue Altbaufassade mit Rundbogenfenstern und Schriftzug Steakhouse Restaurant" widths={[320, 499]} sizes="(min-width: 640px) 320px, 92vw" loading="lazy" />
         </div>
         <address class="anfahrt__adresse">
           <strong>{betrieb.name}</strong>
@@ -59,7 +59,7 @@ import { betrieb, social } from '../../data/betrieb';
   @media (min-width: 1100px) { .anfahrt__raster { grid-template-columns: 1fr 1fr; } }
 
   .anfahrt__karte { display: flex; flex-wrap: wrap; gap: var(--raum-6); align-items: center; margin-block-end: var(--raum-6); }
-  .anfahrt__bild { width: 268px; max-width: 100%; border-radius: var(--radius-m); overflow: hidden; box-shadow: var(--schatten-weich); }
+  .anfahrt__bild { width: 320px; max-width: 100%; border-radius: var(--radius-m); overflow: hidden; box-shadow: var(--schatten-weich); }
   .anfahrt__adresse { font-style: normal; display: grid; gap: var(--raum-1); font-size: var(--text-lg); }
   .anfahrt__adresse a { font-weight: 600; }
 

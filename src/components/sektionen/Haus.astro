@@ -1,36 +1,44 @@
 ---
 /**
- * Das Haus: die vier ausgewaehlten Bilder (Wunsch "Top 4", Auswahl in docs/BILDER.md).
- * Vier gleich breite, versetzte Bilder statt einem grossen: die Vorlagen sind nur rund 268 px
- * breit (aus Screenshots), groesser gezogen wuerden sie verwaschen. Mit den Originalen kann
- * Bild 1 doppelt breit werden (Klasse haus__bild--gross vorbereitet).
+ * Das Haus: die vier ausgewählten Bilder (Wunsch "Top 4"), aus dem Upload des Kunden, je
+ * 1360 x 1020 px. Auswahl und Grund in docs/BILDER.md. Vier Zellen, keine leere: die Bar
+ * breit oben, darunter Bögen, Weinwand und Stier. Der Stier ist nicht breit gezogen, weil das
+ * Foto weich ist und in voller Breite unscharf wirkt.
  */
-import { Image } from 'astro:assets';
-import gastraum from '../../assets/bilder/gastraum-weinwand.png';
-import nische from '../../assets/bilder/sitznische-bar.png';
-import boegen from '../../assets/bilder/steinboegen.png';
-import stier from '../../assets/bilder/stier.png';
+import { Picture } from 'astro:assets';
+import bar from '../../assets/bilder/bar-samtbank.webp';
+import boegen from '../../assets/bilder/natursteinboegen.webp';
+import wein from '../../assets/bilder/weinwand-bogen.webp';
+import stier from '../../assets/bilder/stier.webp';
 
 const bilder = [
-  { src: gastraum, alt: 'Gastraum mit roten Stühlen, Weinregalen und Natursteinbögen', unterschrift: 'Gastraum mit Weinwand' },
-  { src: nische, alt: 'Rote Lederbank als Sitznische vor der beleuchteten Bar', unterschrift: 'Sitznische vor der Bar' },
-  { src: boegen, alt: 'Blick durch mehrere Rundbögen aus Naturstein im Gastraum', unterschrift: 'Natursteinbögen' },
-  { src: stier, alt: 'Schwarze Stierskulptur vor einer Natursteinwand mit Palme', unterschrift: 'Der Stier' },
+  { src: bar, alt: 'Geschwungene rote Samtbank vor der beleuchteten Bar mit Weinflaschen und Stierfigur', unterschrift: 'Die Bar', klasse: 'haus__bild--bar' },
+  { src: boegen, alt: 'Blick durch mehrere Rundbögen aus Naturstein, rechts gedeckte Tische mit roten Stühlen', unterschrift: 'Natursteinbögen', klasse: 'haus__bild--boegen' },
+  { src: wein, alt: 'Weinregal mit Rotweinflaschen in einem Rundbogen aus Naturstein', unterschrift: 'Weinwand im Bogen', klasse: 'haus__bild--wein' },
+  { src: stier, alt: 'Schwarze Stierskulptur auf einem Tisch vor einer Natursteinwand', unterschrift: 'Der Stier', klasse: 'haus__bild--stier' },
 ];
 ---
 <section class="sektion haus" id="haus" aria-labelledby="haus-titel">
   <div class="inhalt--weit">
-    <div class="kopfzeile haus__kopf">
+    <div class="kopfzeile">
       <h2 id="haus-titel">Das Haus an der Ückendorfer Straße</h2>
-      <p data-copy-vorschlag>Natursteinbögen, rote Lederbänke und eine Wand voller Wein. Der Gastraum ist voll klimatisiert.</p>
+      <p data-copy-vorschlag>Natursteinbögen, rote Samtbänke und eine Wand voller Wein. Der Gastraum ist voll klimatisiert.</p>
     </div>
 
-    <ul class="haus__bilder" data-anim="auf">
-      {bilder.map((b) => (
-        <li class="haus__bild">
+    <ul class="haus__bilder">
+      {bilder.map((b, i) => (
+        <li class:list={['haus__bild', b.klasse]} data-anim={i === 0 ? undefined : 'auf'}>
           <figure>
             <div class="haus__rahmen zoomt">
-              <Image src={b.src} alt={b.alt} widths={[268]} sizes="(min-width: 1100px) 300px, 45vw" loading="lazy" />
+              <Picture
+                fallbackFormat="webp"
+                src={b.src}
+                formats={['avif', 'webp']}
+                widths={i === 0 ? [640, 960, 1360] : [480, 800, 1200]}
+                sizes={i === 0 ? '(min-width: 1360px) 1320px, 94vw' : '(min-width: 861px) 32vw, 46vw'}
+                alt={b.alt}
+                loading="lazy"
+              />
             </div>
             <figcaption>{b.unterschrift}</figcaption>
           </figure>
@@ -47,22 +55,31 @@ const bilder = [
     gap: var(--raum-6) var(--raum-4);
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  @media (min-width: 1100px) {
-    .haus__bilder { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: start; }
-    /* Versatz: zweites und viertes Bild sitzen tiefer, wie Fotos auf einem Tisch */
-    .haus__bild:nth-child(even) { margin-block-start: var(--raum-12); }
+  .haus__bild--bar { grid-column: 1 / -1; }
+  @media (min-width: 861px) {
+    .haus__bilder { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
   .haus__bild figure { margin: 0; }
   .haus__rahmen {
     border-radius: var(--radius-m);
-    aspect-ratio: 5 / 3;
+    aspect-ratio: 4 / 3;
     background: var(--farbe-flaeche-alt);
-    box-shadow: var(--schatten-weich);
   }
-  .haus__rahmen :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .haus__bild--bar .haus__rahmen { aspect-ratio: 16 / 9; }
+  @media (min-width: 861px) {
+    .haus__bild--bar .haus__rahmen { aspect-ratio: 21 / 9; }
+  }
+  .haus__rahmen :global(picture), .haus__rahmen :global(img) { width: 100%; height: 100%; }
+  .haus__rahmen :global(img) { object-fit: cover; }
+  .haus__bild--bar :global(img) { object-position: 50% 62%; }
   .haus__bild figcaption {
-    margin-block-start: var(--raum-3);
+    margin-block-start: var(--raum-2);
     font-weight: 600;
     color: var(--farbe-text);
+  }
+  /* letztes Bild unter 861 px quer über beide Spalten, damit keine Zelle leer bleibt */
+  @media (max-width: 860px) {
+    .haus__bild--stier { grid-column: 1 / -1; }
+    .haus__bild--stier .haus__rahmen { aspect-ratio: 16 / 9; }
   }
 </style>
