@@ -1,0 +1,190 @@
+{
+  "$kommentar": [
+    "Maschinenlesbarer Teil des Markenbriefs. Die Prosa steht in docs/marke-brief.md.",
+    "Einzige Quelle fuer Farbrollen, Schriften, Motion, Icons und Sprache. src/styles/tokens.css leitet sich hieraus ab.",
+    "Was hier nicht steht, darf im Komponentencode nicht als Wert auftauchen."
+  ],
+
+  "projekt": {
+    "kunde": "Restaurant & Steakhouse Haus Witte, Gelsenkirchen",
+    "typ": "homepage",
+    "stand": "2026-10-22",
+    "sprache": "de-DE"
+  },
+
+  "gestaltung": {
+    "lesart": "Ich lese das als: Homepage fuer Gaeste aus Gelsenkirchen und dem Ruhrgebiet, die einen Tisch fuer Steak vom Holzkohlengrill suchen, oft am Handy und kurz vor dem Anruf, in einer warmen, bodenstaendig gehobenen Sprache, mit Tendenz zu Retro/Vintage aus der Bestandsmarke (Westernlogo mit Stier, Ochsenblutrot, Natursteinboegen, dunkles Holz).",
+    "regler": {
+      "varianz": 5,
+      "bewegung": 4,
+      "dichte": 4,
+      "begruendung": "Varianz 5: lokaler Betrieb mit Bildmaterial, versetzte Galerie ja, Experiment nein. Bewegung 4: ein orchestrierter Moment (Umblaettern der Karte), sonst Einblendungen an Schluesselstellen. Dichte 4: Speisekarte darf dicht sein, der Rest braucht Luft."
+    },
+    "richtungswahl": {
+      "gewaehlt": "Bestandsmarke fortgeschrieben: Ochsenblut, Holzkohle, Naturstein",
+      "grund": "Relaunch einer bekannten Marke seit 1999, Stammgaeste sollen das Haus wiedererkennen. Keine Varianten vorgelegt, weil der Auftrag direkt den Bau verlangt.",
+      "verworfen": ["Dunkle Luxus-Steakhouse-Optik mit Gold: passt nicht zu einem Familienbetrieb in Ueckendorf und kippt in die Premium-Standardpalette"],
+      "entschieden_von": "Agentur, 22.10.2026, Abstimmung mit dem Kunden offen"
+    },
+    "sperren": {
+      "akzent": "akzent (Ochsenblutrot rot-500), auf der ganzen Seite dieselbe Rolle",
+      "form": "Mischregel: Knoepfe und Felder Radius s (4 px), Karten und Bilder Radius m (6 px), Speisekarte kantig wie Papier",
+      "thema": "hell",
+      "$thema_hinweis": "flaeche_dunkel (Holzkohle) ist feste Rolle und kehrt wieder: Held, Speisekarte als Buehne, Fuss."
+    }
+  },
+
+  "herkunft": {
+    "designsystem": {
+      "stufe": 2,
+      "quelle": "Logo (Rasterbild der Bestandsseite) und Hausfarbe #660000 der Bestandsseite, gemessen an Screenshots vom 22.10.2026",
+      "geprueft_am": "2026-10-22",
+      "geschuetzt": ["farbe", "logo"]
+    },
+    "bestehende_marke": {
+      "quelle": "http://steakhouse-hauswitte.de/ (Screenshots des Nutzers, Abruf aus der Arbeitsumgebung gesperrt)",
+      "geprueft_am": "2026-10-22",
+      "logo_uebernommen": "ja, unveraendert, als Rasterbild 163 x 116 px aus dem Screenshot. Vektorfassung fehlt",
+      "farbe_uebernommen": "ja: #660000 aus Topleiste und Fuss bleibt Hausfarbe (rot-800). Logorot gemessen um #a3403b (JPEG verrauscht), als rot-500 #a61f1a geschaerft",
+      "schrift_uebernommen": "nein: die Bestandsseite nutzt Theme-Schriften (Open Sans und Lato nach Anschein, gesperrt). Die Holzlettern-Slab des Logos und die Kapitaelchen-Antiqua der gedruckten Karte bleiben im Logo und im Kartendeckblatt sichtbar",
+      "abweichungen_begruendung": "Schrift neu, weil die Theme-Schriften nichts mit der Marke zu tun haben. Weisse Flaechen mit roten Trennbalken der alten Seite ersetzt durch Naturstein und Holzkohle aus den eigenen Fotos, damit die Seite nach dem Haus aussieht und nicht nach dem WordPress-Theme."
+    },
+    "referenzen": []
+  },
+
+  "farbe": {
+    "rampe": {
+      "rot-50": "#f8ecea",
+      "rot-200": "#efb5ad",
+      "rot-300": "#e08a7f",
+      "rot-500": "#a61f1a",
+      "rot-600": "#8c1612",
+      "rot-800": "#660000",
+      "kohle-900": "#1c1a19",
+      "kohle-800": "#262321",
+      "stein-200": "#ebe7e1",
+      "papier": "#fffdf8",
+      "glut": "#e2742f"
+    },
+    "rollen": {
+      "marke": "rot-800",
+      "marke_text": "rot-800",
+      "akzent": "rot-500",
+      "akzent_auf": "#ffffff",
+      "akzent_hover": "rot-600",
+      "flaeche": "#fcfbf9",
+      "flaeche_alt": "stein-200",
+      "flaeche_dunkel": "kohle-900",
+      "flaeche_karte": "papier",
+      "text": "#211d1c",
+      "text_leise": "#5f5753",
+      "text_invers": "#fcfbf9",
+      "text_invers_leise": "#c9c1bb",
+      "marke_auf_dunkel": "rot-300",
+      "rahmen": "#d9d3cb",
+      "fokus": "#211d1c",
+      "fokus_auf_dunkel": "rot-300",
+      "erfolg": "#2f6b3a",
+      "fehler": "rot-500",
+      "glut_deko": "glut, nur im Verlauf, nie als Text"
+    },
+    "geprueft": {
+      "stand": "2026-10-22, per Hand gerechnet, pruefe-kontrast.mjs folgt in Phase 5",
+      "werte": {
+        "text auf flaeche": 16.15,
+        "text_leise auf flaeche": 6.83,
+        "text_leise auf stein": 5.73,
+        "rot-500 auf flaeche": 7.17,
+        "weiss auf rot-500": 7.41,
+        "rot-300 auf kohle-900": 6.7,
+        "text_invers_leise auf kohle-900": 9.77,
+        "rot-500 auf kohle-900 (Flaechengrenze)": 2.34
+      },
+      "$hinweis": "rot-500 auf kohle-900 erreicht als Begrenzung nur 2,34:1. Knoepfe in dunklen Sektionen bekommen deshalb einen Rand in rot-300."
+    }
+  },
+
+  "typografie": {
+    "text": {
+      "familie": "Source Sans 3",
+      "lizenz": "OFL, selbst gehostet ueber @fontsource",
+      "schnitte": [400, 600],
+      "begruendung": "hohe x-Hoehe und offene Formen, gut lesbar fuer eine aeltere Stammkundschaft am Handy und in der dichten Speisekarte"
+    },
+    "display": {
+      "familie": "Zilla Slab",
+      "lizenz": "OFL, selbst gehostet ueber @fontsource",
+      "schnitte": [600, 700],
+      "begruendung": "Slab-Serife greift die Holzlettern von HAUS WITTE im Logo auf und passt zum Ruhrgebiet: kraeftig, ehrlich, ohne Luxus-Attituede. Kein Serifenreflex: die Begruendung kommt aus dem Logo."
+    },
+    "strichstaerke_display": 700
+  },
+
+  "raum": {
+    "basis": 4,
+    "skala": [4, 8, 12, 16, 24, 32, 48, 64, 96, 128]
+  },
+
+  "layout": {
+    "breite_inhalt": "1200px",
+    "breite_text": "64ch",
+    "haltepunkte": {
+      "480": "kleines Handy",
+      "640": "grosses Handy",
+      "861": "Umschaltpunkt Menue",
+      "1100": "kleiner Laptop",
+      "1200": "Desktop, grosse Typostufe"
+    },
+    "container_queries": true
+  },
+
+  "motion": {
+    "handschrift": "Bewegung wie am Grill: ruhig, mit Gewicht, nichts huepft. Elemente setzen sich ab wie ein Teller auf dem Tisch, kurz und ohne Nachfedern. Der eine laute Moment ist das Umblaettern der Karte.",
+    "profil": "weich",
+    "dauer": { "sofort": 0.12, "schnell": 0.2, "normal": 0.4, "lang": 0.6, "sequenz": 0.9 },
+    "kurve": {
+      "eintritt": "cubic-bezier(0.22, 1, 0.36, 1)",
+      "austritt": "cubic-bezier(0.4, 0, 1, 1)",
+      "wechsel": "cubic-bezier(0.4, 0, 0.2, 1)"
+    },
+    "overshoot_erlaubt": false,
+    "signatur_moment": "Speisekarte als Buch: Seite schlaegt in 3D um (0,6 s), bei reduzierter Bewegung reiner Wechsel ohne Drehung",
+    "reduzierte_bewegung": "gestuft"
+  },
+
+  "icons": {
+    "eigenes_set_fuer": ["Kontakt und Reservierung: Telefon, Uhr, Ort, Personen", "Social: Facebook, Instagram, Google"],
+    "bibliothek": "keine, die wenigen Systemicons (Pfeil, Menue, Schliessen) sind im selben Set gezeichnet",
+    "raster": 24,
+    "stil": "linie",
+    "strichstaerke": 2,
+    "kappen": "rund",
+    "ecken": "rund",
+    "eckenradius": 2
+  },
+
+  "sprache": {
+    "anrede": "Sie",
+    "ton": ["herzlich", "bodenstaendig", "klar"],
+    "cta_primaer": "Tisch reservieren",
+    "cta_sekundaer": "Speisekarte ansehen",
+    "cta_telefon": "0209 141378 anrufen",
+    "gedankenstriche_verboten": true,
+    "verbotene_woerter": [
+      "Lösung", "innovativ", "ganzheitlich", "maßgeschneidert", "Synergie",
+      "Ihr Partner für", "Herzlich willkommen", "Wir über uns", "Qualität seit",
+      "zukunftssicher", "aus einer Hand",
+      "Gaumenschmaus", "kulinarische Reise", "Genuss pur", "verwöhnen lassen", "unvergesslich"
+    ]
+  },
+
+  "beweise": {
+    "eintraege": [
+      { "art": "bewertung", "wert": null, "quelle": "Google Places API ueber /api/bewertungen, live", "stand": "beim Abruf", "freigabe": true },
+      { "art": "fleischherkunft", "wert": "ausschliesslich Rindfleisch der Marke Black Ranch, Argentinien", "quelle": "Text der Bestandsseite", "stand": "2026-10-22", "freigabe": true },
+      { "art": "gruendung", "wert": "seit 1999", "quelle": "Heldenbild der Bestandsseite (THE BEST SINCE 1999)", "stand": "2026-10-22", "freigabe": true }
+    ]
+  },
+
+  "recruiting": { "aktiv": false }
+}
