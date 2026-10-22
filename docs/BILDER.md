@@ -11,7 +11,7 @@ dem Livegang durch die Originale zu ersetzen (gleicher Dateiname, dann baut Astr
 | `steinboegen.png` | Natursteinbögen, Blick durch den Raum | 268 x 160 | Haus, Bild 3 von 4 | Original, mind. 1200 px |
 | `stier.png` | Stierskulptur | 268 x 161 | Haus, Bild 4 von 4 | Original, mind. 1200 px |
 | `fassade.png` | Altbaufassade Ückendorfer Straße | 268 x 160 | Anfahrt | Original, mind. 1200 px |
-| `steak-holzkohle.png` | Steak mit Rosmarin | 1195 x 382 | Held, Speisen | Rechte klären (Verdacht Stockfoto), besser eigenes Foto vom Grill |
+| `steak-holzkohle.png` | aufgeschnittenes Steak mit Tomate | 460 x 382 | Held | nur der rechte Ausschnitt ohne den eingebrannten Schriftzug „THE BEST SINCE 1999“ der alten Seite. Original ohne Text nötig, Rechte klären (Verdacht Stockfoto), besser eigenes Foto vom Grill |
 | `mittagsteller.png` | Steak mit Pommes | 777 x 258 | Speisen: Mittagstisch | Rechte klären, Original |
 | `palatschinken.png` | Palatschinken mit Kirschen | 936 x 311 | Speisen: Desserts | Rechte klären (Verdacht Stockfoto) |
 | `logo-haus-witte.png` | Logo | 163 x 116 | Kopf, Fuß | SVG oder PNG ab 800 px |

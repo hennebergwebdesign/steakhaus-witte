@@ -77,10 +77,14 @@ Tokens in `src/styles/tokens.css`, abgeleitet aus `docs/marke.json`. Globale Bas
 | `src/components/Fuss.astro` | Kontakt, Öffnungszeiten, Social Links, Pflichtlinks |
 | `src/components/Icon.astro` | eigenes Icon-Set, Linie 2 px |
 | `src/data/betrieb.ts` | Name, Adresse, Telefon, Öffnungszeiten, Social: einzige Quelle für NAP |
+| `src/components/sektionen/Held.astro` | Held, Holzkohle mit Glut, Steakfoto rechts (Grund im Kopfkommentar) |
+| `src/components/sektionen/Speisen.astro` | Steak groß als Glutfläche, Mittagstisch und Desserts mit Foto, Sprung in die Karte |
+| `src/components/sektionen/Qualitaet.astro` | gelieferter Text zu Black Ranch, drei Merkmale |
+| `src/components/sektionen/Haus.astro` | die vier Bilder, versetzt |
 
 ## Stand
 
-Phase 1 und 2 abgeschlossen. Weitere Phasen folgen, siehe Änderungsverlauf.
+Phase 1 bis 3 abgeschlossen. Weitere Phasen folgen, siehe Änderungsverlauf.
 
 ## Offene Punkte
 
@@ -98,3 +102,7 @@ vollständige Speisekarte, Öffnungszeiten bestätigen, Social-Media-Adressen, P
   Icon-Set, Kopf mit Mobilmenü und Mobilbalken, Fuß, Basislayout. Die Quellskills aus Phase 0
   sind nicht installiert: ohne Zustimmung des Nutzers installiert kein Agent fremde Skills
   (`arbeitsdisziplin.md`, 9a).
+- **22.10.2026** Phase 3: Held, Speisen, Qualität, Haus. Das Steakfoto der alten Seite trägt den
+  eingebrannten Schriftzug „THE BEST SINCE 1999“; verwendet wird nur der rechte Ausschnitt ohne
+  Schrift (460 px). Deshalb Text links und Bild rechts im Held und die Steakkarte als Glutfläche
+  ohne Foto. Eigene Kurve `--text-held`, damit die Überschrift ab 1100 px zweizeilig bleibt.

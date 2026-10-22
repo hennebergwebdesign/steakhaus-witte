@@ -1,10 +1,17 @@
 ---
 import Basis from '../layouts/Basis.astro';
+import Held from '../components/sektionen/Held.astro';
+import Speisen from '../components/sektionen/Speisen.astro';
+import Qualitaet from '../components/sektionen/Qualitaet.astro';
+import Haus from '../components/sektionen/Haus.astro';
 ---
 <Basis
   titel="Steakhouse Haus Witte Gelsenkirchen: Steaks vom Holzkohlengrill"
   beschreibung="Steaks vom Holzkohlengrill aus argentinischem Black Ranch Rindfleisch, Mittagstisch mit Salatbar. Ückendorfer Straße 205, Gelsenkirchen. Tisch reservieren."
   start
 >
-  <section class="sektion"><div class="inhalt"><h1>Haus Witte</h1><p>Gerüst, Sektionen folgen in Phase 3.</p></div></section>
+  <Held />
+  <Speisen />
+  <Qualitaet />
+  <Haus />
 </Basis>

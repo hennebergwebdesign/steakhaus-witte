@@ -1,0 +1,155 @@
+---
+/**
+ * Speisen: drei Angebote mit klarer Rangfolge. Das Steak ist gross, Mittagstisch und Dessert
+ * kleiner daneben, statt drei gleich breiter Karten (26-geschmack-und-ki-tells.md, Abschnitt 5).
+ * Die Steakkarte ist eine Holzkohlefläche mit Glut und ohne Foto: das Steakfoto steht schon im
+ * Held, ein zweites ohne eingebrannten Schriftzug gibt es nicht.
+ * Jede Karte springt zur passenden Seite der Speisekarte (data-karte-seite).
+ */
+import { Picture } from 'astro:assets';
+import mittag from '../../assets/bilder/mittagsteller.png';
+import dessert from '../../assets/bilder/palatschinken.png';
+import Icon from '../Icon.astro';
+
+const karten = [
+  {
+    id: 'steaks',
+    titel: 'Steaks vom Holzkohlengrill',
+    text: 'Rindfleisch ausschließlich von Black Ranch aus Argentinien, über Holzkohle gegrillt.',
+    vorschlag: true,
+    bild: null,
+    alt: '',
+    link: 'Steaks in der Karte',
+    seite: 'steaks',
+    gross: true,
+  },
+  {
+    id: 'mittag',
+    titel: 'Mittagstisch',
+    text: 'Zu unseren Mittagsgerichten servieren wir eine Tagessuppe und Sie dürfen sich an unserer reichhaltigen Salat-Bar bedienen. Die Mittagskarte wechselt monatlich.',
+    vorschlag: false,
+    bild: mittag,
+    alt: 'Teller mit Steak, Pommes frites und Kräuterbutter',
+    link: 'Zur Mittagskarte',
+    seite: 'mittagskarte',
+    gross: false,
+  },
+  {
+    id: 'dessert',
+    titel: 'Desserts',
+    text: 'Palatschinken, Apfelstrudel, Heiße Liebe und Eisbecher zum Abschluss.',
+    vorschlag: true,
+    bild: dessert,
+    alt: 'Palatschinken mit Schokoladensauce und Kirschen',
+    link: 'Zu den Desserts',
+    seite: 'desserts',
+    gross: false,
+  },
+];
+---
+<section class="sektion speisen" id="speisen" aria-labelledby="speisen-titel">
+  <div class="inhalt--weit">
+    <div class="kopfzeile">
+      <h2 id="speisen-titel">Steak, Mittagstisch und Dessert</h2>
+    </div>
+
+    <div class="speisen__raster">
+      {karten.map((k) => (
+        <article class:list={['speise', 'hebt', { 'speise--gross': k.gross }]}>
+          {k.bild ? (
+            <div class="speise__bild zoomt">
+              <Picture
+                src={k.bild}
+                formats={['avif', 'webp']}
+                widths={[400, 777]}
+                sizes="(min-width: 861px) 38vw, 92vw"
+                alt={k.alt}
+                loading="lazy"
+              />
+            </div>
+          ) : (
+            <div class="speise__glut" aria-hidden="true"></div>
+          )}
+          <div class="speise__text">
+            <h3>{k.titel}</h3>
+            <p data-copy-vorschlag={k.vorschlag ? '' : undefined}>{k.text}</p>
+            <a class="speise__link" href="#speisekarte" data-karte-seite={k.seite}>
+              {k.link}<Icon name="pfeil-rechts" />
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .speisen__raster {
+    display: grid;
+    gap: var(--raum-spalte);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 861px) {
+    .speisen__raster { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .speise--gross { grid-column: 1 / -1; }
+  }
+
+  .speise {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--farbe-flaeche);
+    border: 1px solid var(--farbe-rahmen);
+    border-radius: var(--radius-m);
+    overflow: hidden;
+  }
+  .speise__bild { aspect-ratio: 16 / 9; background: var(--farbe-flaeche-alt); }
+
+  /* Steakkarte: Holzkohle mit Glut, Text unten, große Schrift */
+  .speise--gross {
+    isolation: isolate;
+    justify-content: flex-end;
+    min-height: 18rem;
+    background: var(--farbe-flaeche-dunkel);
+    border-color: var(--farbe-flaeche-dunkel);
+    color: var(--farbe-text-invers);
+    --farbe-fokus: var(--farbe-marke-auf-dunkel);
+  }
+  .speise__glut {
+    position: absolute; inset: 0; z-index: -1;
+    background: var(--verlauf-glut);
+    transition: opacity var(--dauer-normal) var(--kurve);
+    opacity: 0.8;
+  }
+  .speise--gross:hover .speise__glut { opacity: 1; }
+  .speise--gross .speise__text { padding: var(--raum-8); gap: var(--raum-4); }
+  .speise--gross .speise__text p { color: var(--farbe-text-invers-leise); font-size: var(--text-lg); max-width: 30rem; }
+  .speise--gross .speise__link { color: var(--farbe-marke-auf-dunkel); }
+  .speise__bild :global(picture), .speise__bild :global(img) { width: 100%; height: 100%; }
+  .speise__bild :global(img) { object-fit: cover; }
+
+  .speise__text { padding: var(--raum-6); display: grid; gap: var(--raum-3); }
+  .speise__text h3 { margin: 0; }
+  .speise--gross .speise__text h3 { font-size: var(--text-h1); }
+  @media (min-width: 861px) {
+    /* breit: Ueberschrift links, Text und Link rechts */
+    .speise--gross .speise__text { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: end; column-gap: var(--raum-spalte); }
+    .speise--gross .speise__text h3 { grid-row: span 2; }
+  }
+  .speise__text p { margin: 0; color: var(--farbe-text-leise); }
+
+  .speise__link {
+    display: inline-flex; align-items: center; gap: var(--raum-2);
+    font-weight: 600; text-decoration: none; min-height: 2.75rem;
+    justify-self: start;
+  }
+  .speise__link :global(.icon) { transition: transform var(--dauer-schnell) var(--kurve); }
+  .speise__link:hover :global(.icon) { transform: translateX(var(--raum-1)); }
+  /* Die ganze Karte ist klickbar, der Link bleibt das eine Fokusziel */
+  .speise__link::after { content: ''; position: absolute; inset: 0; }
+  .speise:focus-within { outline: 3px solid var(--farbe-fokus); outline-offset: 3px; }
+  .speise__link:focus-visible { outline: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .speise__link:hover :global(.icon) { transform: none; }
+  }
+</style>

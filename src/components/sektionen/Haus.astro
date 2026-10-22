@@ -1,0 +1,68 @@
+---
+/**
+ * Das Haus: die vier ausgewaehlten Bilder (Wunsch "Top 4", Auswahl in docs/BILDER.md).
+ * Vier gleich breite, versetzte Bilder statt einem grossen: die Vorlagen sind nur rund 268 px
+ * breit (aus Screenshots), groesser gezogen wuerden sie verwaschen. Mit den Originalen kann
+ * Bild 1 doppelt breit werden (Klasse haus__bild--gross vorbereitet).
+ */
+import { Image } from 'astro:assets';
+import gastraum from '../../assets/bilder/gastraum-weinwand.png';
+import nische from '../../assets/bilder/sitznische-bar.png';
+import boegen from '../../assets/bilder/steinboegen.png';
+import stier from '../../assets/bilder/stier.png';
+
+const bilder = [
+  { src: gastraum, alt: 'Gastraum mit roten Stühlen, Weinregalen und Natursteinbögen', unterschrift: 'Gastraum mit Weinwand' },
+  { src: nische, alt: 'Rote Lederbank als Sitznische vor der beleuchteten Bar', unterschrift: 'Sitznische vor der Bar' },
+  { src: boegen, alt: 'Blick durch mehrere Rundbögen aus Naturstein im Gastraum', unterschrift: 'Natursteinbögen' },
+  { src: stier, alt: 'Schwarze Stierskulptur vor einer Natursteinwand mit Palme', unterschrift: 'Der Stier' },
+];
+---
+<section class="sektion haus" id="haus" aria-labelledby="haus-titel">
+  <div class="inhalt--weit">
+    <div class="kopfzeile haus__kopf">
+      <h2 id="haus-titel">Das Haus an der Ückendorfer Straße</h2>
+      <p data-copy-vorschlag>Natursteinbögen, rote Lederbänke und eine Wand voller Wein. Der Gastraum ist voll klimatisiert.</p>
+    </div>
+
+    <ul class="haus__bilder" data-anim="auf">
+      {bilder.map((b) => (
+        <li class="haus__bild">
+          <figure>
+            <div class="haus__rahmen zoomt">
+              <Image src={b.src} alt={b.alt} widths={[268]} sizes="(min-width: 1100px) 300px, 45vw" loading="lazy" />
+            </div>
+            <figcaption>{b.unterschrift}</figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .haus__bilder {
+    list-style: none; margin: 0; padding: 0;
+    display: grid;
+    gap: var(--raum-6) var(--raum-4);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @media (min-width: 1100px) {
+    .haus__bilder { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: start; }
+    /* Versatz: zweites und viertes Bild sitzen tiefer, wie Fotos auf einem Tisch */
+    .haus__bild:nth-child(even) { margin-block-start: var(--raum-12); }
+  }
+  .haus__bild figure { margin: 0; }
+  .haus__rahmen {
+    border-radius: var(--radius-m);
+    aspect-ratio: 5 / 3;
+    background: var(--farbe-flaeche-alt);
+    box-shadow: var(--schatten-weich);
+  }
+  .haus__rahmen :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .haus__bild figcaption {
+    margin-block-start: var(--raum-3);
+    font-weight: 600;
+    color: var(--farbe-text);
+  }
+</style>

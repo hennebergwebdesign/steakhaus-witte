@@ -209,3 +209,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
     }
   }
 }
+
+/* Icons: Groesse und Strich aus den Tokens, ueberschreibt die SVG-Attribute */
+.icon { width: var(--icon-groesse); height: var(--icon-groesse); stroke-width: var(--icon-strich); flex: none; }

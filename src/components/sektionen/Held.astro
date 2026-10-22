@@ -1,0 +1,108 @@
+---
+/**
+ * Held: Holzkohle mit Glut von unten, Überschrift links, das Steak rechts als gerahmtes Bild.
+ * Gewohnheitsfrage (26, Abschnitt 4) bewusst beantwortet: Text links und Bild rechts, weil das
+ * einzige Steakfoto ohne eingebrannten Schriftzug nur 460 x 382 px groß ist. Als Vollbild oder
+ * Band wäre es unscharf. Mit einem Originalfoto vom Grill wird der Held zum Vollbild mit Text
+ * unten links. Höhe 100svh ist harte Grenze; es passt sich der Inhalt an, nie der Container.
+ */
+import { Picture } from 'astro:assets';
+import steak from '../../assets/bilder/steak-holzkohle.png';
+import { betrieb } from '../../data/betrieb';
+---
+<section class="held" aria-labelledby="held-titel">
+  <div class="held__glut" aria-hidden="true"></div>
+  <div class="held__innen inhalt--weit">
+    <div class="held__text">
+      <h1 id="held-titel" class="held__titel">Steaks vom Holzkohlengrill in&nbsp;Gelsenkirchen</h1>
+      <p class="held__unterzeile" data-copy-vorschlag>
+        Argentinisches Rindfleisch von Black Ranch, über Holzkohle gegrillt. Seit {betrieb.seit} an der Ückendorfer Straße.
+      </p>
+      <div class="held__aktionen">
+        <a class="btn btn--haupt" href="#reservierung">Tisch reservieren</a>
+        <a class="btn btn--zweit" href="#speisekarte">Speisekarte ansehen</a>
+      </div>
+    </div>
+
+    <figure class="held__bild">
+      <Picture
+        src={steak}
+        formats={['avif', 'webp']}
+        widths={[460]}
+        sizes="(min-width: 1100px) 460px, 92vw"
+        alt="Aufgeschnittenes, rosa gegrilltes Rindersteak mit Tomate und Pfefferkörnern auf dunklem Holz"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </figure>
+  </div>
+</section>
+
+<style>
+  .held {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    /* harte Grenze: volle sichtbare Höhe, die sticky Kopfleiste eingerechnet */
+    min-height: calc(100svh - var(--hoehe-kopf));
+    display: flex;
+    background: var(--farbe-flaeche-dunkel);
+    color: var(--farbe-text-invers);
+    --farbe-fokus: var(--farbe-marke-auf-dunkel);
+  }
+  .held__glut {
+    position: absolute; inset: 0; z-index: -1;
+    background: var(--verlauf-glut);
+    pointer-events: none;
+  }
+  .held__innen {
+    display: grid;
+    align-content: center;
+    gap: var(--raum-block);
+    padding-block: var(--raum-block);
+  }
+  @media (min-width: 1100px) {
+    .held__innen { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); align-items: center; }
+  }
+  .held__titel { font-size: var(--text-held); margin-block-end: var(--raum-6); }
+  .held__unterzeile {
+    font-size: var(--text-lg);
+    color: var(--farbe-text-invers-leise);
+    max-width: 36rem;
+    margin-block-end: var(--raum-8);
+  }
+  .held__aktionen { display: flex; flex-wrap: wrap; gap: var(--raum-3); }
+
+  .held__bild {
+    margin: 0;
+    width: 100%;
+    max-width: 460px;
+    justify-self: center;
+    border-radius: var(--radius-m);
+    overflow: hidden;
+    box-shadow: var(--schatten-buch);
+    /* leicht gedreht wie ein aufgelegtes Foto, die Glut liegt dahinter */
+    rotate: 2deg;
+  }
+  .held__bild :global(img) { width: 100%; height: auto; }
+  @media (max-width: 1099px) {
+    .held__bild { rotate: none; max-width: 32rem; justify-self: start; }
+  }
+  @media (max-width: 640px) {
+    .held__bild { aspect-ratio: 16 / 10; }
+    .held__bild :global(img) { height: 100%; object-fit: cover; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .held__text > *, .held__bild {
+      animation: held-ein var(--dauer-lang) var(--kurve-eintritt) both;
+    }
+    .held__unterzeile { animation-delay: 80ms; }
+    .held__aktionen { animation-delay: 160ms; }
+    .held__bild { animation-delay: 240ms; }
+  }
+  @keyframes held-ein {
+    from { opacity: 0; translate: 0 var(--weg-gross); }
+    to { opacity: 1; translate: 0 0; }
+  }
+</style>
