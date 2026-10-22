@@ -7,7 +7,8 @@
   "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
-  "assets": { "directory": "./dist", "binding": "ASSETS" },
+  // Nur dist/client ist öffentlich. dist/server ist der Worker-Code und darf nie als Asset raus.
+  "assets": { "directory": "./dist/client", "binding": "ASSETS" },
   "observability": { "enabled": true },
   // Ohne id: Wrangler legt die Namespaces beim ersten Deploy selbst an (automatische Bereitstellung).
   // Keine erfundenen IDs eintragen, ein falscher Wert bricht den Deploy ab.
