@@ -1,0 +1,47 @@
+---
+/**
+ * Qualitaet: der gelieferte Text der Bestandsseite zur Fleischherkunft, wortgleich bis auf eine
+ * Grammatikkorrektur ("den Verzicht"). Daneben drei Merkmale aus genau diesem Text, nichts dazu.
+ */
+---
+<section class="sektion sektion--alt qualitaet" aria-labelledby="qualitaet-titel">
+  <div class="inhalt qualitaet__raster">
+    <h2 id="qualitaet-titel" class="qualitaet__titel">Black Ranch aus Argentinien</h2>
+    <div class="qualitaet__text">
+      <p class="text-gross">
+        In unserem Steakhouse in Gelsenkirchen bieten wir Ihnen ausschließlich Rindfleisch der
+        argentinischen Premium Qualitätsmarke „Black Ranch“ an. Durch die freie Weidenhaltung und
+        den Verzicht auf Stallhaltung und Zufütterung ist das Fleisch zart und saftig, mit einem
+        ausgeprägten Rindfleischgeschmack.
+      </p>
+      <ul class="qualitaet__merkmale" data-copy-vorschlag>
+        <li><strong>Freie Weidehaltung</strong><span>in Argentinien</span></li>
+        <li><strong>Ohne Stallhaltung</strong><span>und ohne Zufütterung</span></li>
+        <li><strong>Holzkohlengrill</strong><span>seit 1999 in Ückendorf</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .qualitaet__raster {
+    display: grid;
+    gap: var(--raum-8) var(--raum-spalte);
+  }
+  @media (min-width: 1100px) {
+    .qualitaet__raster { grid-template-columns: 5fr 7fr; align-items: start; }
+  }
+  .qualitaet__titel { font-size: var(--text-h1); margin: 0; color: var(--farbe-marke-text); }
+  .qualitaet__text p { margin-block-end: var(--raum-8); }
+  .qualitaet__merkmale {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; gap: var(--raum-4);
+    grid-template-columns: 1fr;
+    border-block-start: 2px solid var(--farbe-marke);
+    padding-block-start: var(--raum-6);
+  }
+  @media (min-width: 640px) { .qualitaet__merkmale { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .qualitaet__merkmale li { display: grid; gap: var(--raum-1); }
+  .qualitaet__merkmale strong { font-family: var(--schrift-display); font-size: var(--text-h4); font-weight: 700; }
+  .qualitaet__merkmale span { color: var(--farbe-text-leise); }
+</style>

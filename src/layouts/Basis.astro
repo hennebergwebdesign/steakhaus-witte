@@ -1,0 +1,62 @@
+---
+/**
+ * Basislayout nach head-meta.html des Skills. Kein GTM, kein Consent-Default: die Seite
+ * nutzt keinen einwilligungspflichtigen Dienst (siehe CLAUDE.md, Consent).
+ */
+import '../styles/global.css';
+import Kopf from '../components/Kopf.astro';
+import Fuss from '../components/Fuss.astro';
+import { betrieb } from '../data/betrieb';
+
+interface Props {
+  titel: string;
+  beschreibung: string;
+  noindex?: boolean;
+  start?: boolean;
+  ogBild?: string;
+}
+const { titel, beschreibung, noindex = false, start = false, ogBild = '/og-haus-witte.jpg' } = Astro.props;
+const kanonisch = new URL(Astro.url.pathname, Astro.site).href;
+const ogAbsolut = new URL(ogBild, Astro.site).href;
+---
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titel}</title>
+    <meta name="description" content={beschreibung} />
+    <link rel="canonical" href={kanonisch} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    <meta name="theme-color" content="#1c1a19" /><!-- bewusst: meta liest keine CSS-Variable, Wert = --kohle-900 -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <link rel="preload" href="/fonts/zilla-slab-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/source-sans-3-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={betrieb.name} />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:title" content={titel} />
+    <meta property="og:description" content={beschreibung} />
+    <meta property="og:url" content={kanonisch} />
+    <meta property="og:image" content={ogAbsolut} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Haus Witte bei Nacht mit der Wortmarke Haus Witte, Steakhouse, Holzkohlengrill" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <slot name="kopf" />
+  </head>
+  <body id="top">
+    <a class="sprunglink" href="#hauptinhalt">Zum Inhalt springen</a>
+    <Kopf start={start} />
+    <main id="hauptinhalt" tabindex="-1">
+      <slot />
+    </main>
+    <Fuss />
+  </body>
+</html>

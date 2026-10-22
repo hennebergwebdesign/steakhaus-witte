@@ -1,0 +1,85 @@
+---
+/**
+ * Das Haus: die vier ausgewählten Bilder (Wunsch "Top 4"), aus dem Upload des Kunden, je
+ * 1360 x 1020 px. Auswahl und Grund in docs/BILDER.md. Vier Zellen, keine leere: die Bar
+ * breit oben, darunter Bögen, Weinwand und Stier. Der Stier ist nicht breit gezogen, weil das
+ * Foto weich ist und in voller Breite unscharf wirkt.
+ */
+import { Picture } from 'astro:assets';
+import bar from '../../assets/bilder/bar-samtbank.webp';
+import boegen from '../../assets/bilder/natursteinboegen.webp';
+import wein from '../../assets/bilder/weinwand-bogen.webp';
+import stier from '../../assets/bilder/stier.webp';
+
+const bilder = [
+  { src: bar, alt: 'Geschwungene rote Samtbank vor der beleuchteten Bar mit Weinflaschen und Stierfigur', unterschrift: 'Die Bar', klasse: 'haus__bild--bar' },
+  { src: boegen, alt: 'Blick durch mehrere Rundbögen aus Naturstein, rechts gedeckte Tische mit roten Stühlen', unterschrift: 'Natursteinbögen', klasse: 'haus__bild--boegen' },
+  { src: wein, alt: 'Weinregal mit Rotweinflaschen in einem Rundbogen aus Naturstein', unterschrift: 'Weinwand im Bogen', klasse: 'haus__bild--wein' },
+  { src: stier, alt: 'Schwarze Stierskulptur auf einem Tisch vor einer Natursteinwand', unterschrift: 'Der Stier', klasse: 'haus__bild--stier' },
+];
+---
+<section class="sektion haus" id="haus" aria-labelledby="haus-titel">
+  <div class="inhalt--weit">
+    <div class="kopfzeile">
+      <h2 id="haus-titel">Das Haus an der Ückendorfer Straße</h2>
+      <p data-copy-vorschlag>Natursteinbögen, rote Samtbänke und eine Wand voller Wein. Der Gastraum ist voll klimatisiert.</p>
+    </div>
+
+    <ul class="haus__bilder">
+      {bilder.map((b, i) => (
+        <li class:list={['haus__bild', b.klasse]} data-anim={i === 0 ? undefined : 'auf'}>
+          <figure>
+            <div class="haus__rahmen zoomt">
+              <Picture
+                fallbackFormat="webp"
+                src={b.src}
+                formats={['avif', 'webp']}
+                widths={i === 0 ? [640, 960, 1360] : [480, 800, 1200]}
+                sizes={i === 0 ? '(min-width: 1360px) 1320px, 94vw' : '(min-width: 861px) 32vw, 46vw'}
+                alt={b.alt}
+                loading="lazy"
+              />
+            </div>
+            <figcaption>{b.unterschrift}</figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .haus__bilder {
+    list-style: none; margin: 0; padding: 0;
+    display: grid;
+    gap: var(--raum-6) var(--raum-4);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .haus__bild--bar { grid-column: 1 / -1; }
+  @media (min-width: 861px) {
+    .haus__bilder { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  .haus__bild figure { margin: 0; }
+  .haus__rahmen {
+    border-radius: var(--radius-m);
+    aspect-ratio: 4 / 3;
+    background: var(--farbe-flaeche-alt);
+  }
+  .haus__bild--bar .haus__rahmen { aspect-ratio: 16 / 9; }
+  @media (min-width: 861px) {
+    .haus__bild--bar .haus__rahmen { aspect-ratio: 21 / 9; }
+  }
+  .haus__rahmen :global(picture), .haus__rahmen :global(img) { width: 100%; height: 100%; }
+  .haus__rahmen :global(img) { object-fit: cover; }
+  .haus__bild--bar :global(img) { object-position: 50% 62%; }
+  .haus__bild figcaption {
+    margin-block-start: var(--raum-2);
+    font-weight: 600;
+    color: var(--farbe-text);
+  }
+  /* letztes Bild unter 861 px quer über beide Spalten, damit keine Zelle leer bleibt */
+  @media (max-width: 860px) {
+    .haus__bild--stier { grid-column: 1 / -1; }
+    .haus__bild--stier .haus__rahmen { aspect-ratio: 16 / 9; }
+  }
+</style>

@@ -1,0 +1,291 @@
+---
+/**
+ * Reservierungsanfrage. Mehr Felder als die Faustregel von drei bis fünf (06-conversion-
+ * architektur.md), weil Datum, Uhrzeit und Personen die Anfrage erst bearbeitbar machen und
+ * das Telefon für Rückfragen gebraucht wird. Kein Feld darüber hinaus; Allergien werden
+ * bewusst nicht abgefragt (Gesundheitsdaten, Art. 9 DSGVO), das klärt der Service am Tisch.
+ *
+ * Funktioniert ohne JavaScript (method post), das Skript legt Prüfung, Zustände und
+ * Turnstile darüber. Vier Zustände: Ruhe, Senden, Erfolg, Fehler mit Telefon.
+ */
+import Icon from '../Icon.astro';
+import { betrieb, oeffnungszeiten } from '../../data/betrieb';
+import { MAX_PERSONEN_ONLINE } from '../../lib/reservierung-pruefung';
+
+const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undefined;
+const personen = Array.from({ length: MAX_PERSONEN_ONLINE }, (_, i) => i + 1);
+---
+<section class="sektion reservierung" id="reservierung" aria-labelledby="reservierung-titel">
+  <div class="inhalt--weit reservierung__raster">
+    <div class="reservierung__info">
+      <h2 id="reservierung-titel">Tisch reservieren</h2>
+      <p class="text-gross" data-copy-vorschlag>
+        Schicken Sie uns Ihre Wunschzeit. Wir bestätigen die Reservierung per E-Mail oder Telefon.
+      </p>
+
+      <div class="reservierung__telefon">
+        <p>Lieber direkt sprechen?</p>
+        <a class="reservierung__nummer" href={betrieb.telefonLink}><Icon name="telefon" />{betrieb.telefon}</a>
+      </div>
+
+      <div class="reservierung__zeiten">
+        <h3><Icon name="uhr" />Öffnungszeiten</h3>
+        <dl data-copy-vorschlag={oeffnungszeiten.bestaetigt ? undefined : ''}>
+          {oeffnungszeiten.zeilen.map((z) => (
+            <div><dt>{z.tage}</dt><dd>{z.zeiten}</dd></div>
+          ))}
+        </dl>
+      </div>
+    </div>
+
+    <div class="reservierung__karte">
+      <form class="formular" method="post" action="/api/reservierung" novalidate data-formular>
+        <div class="formular__raster">
+          <div class="feld">
+            <label for="r-datum">Datum</label>
+            <input id="r-datum" name="datum" type="date" required autocomplete="off" aria-describedby="r-datum-fehler r-datum-hilfe" />
+            <p class="feld__hilfe" id="r-datum-hilfe">Mittwochs Ruhetag</p>
+            <p class="feld__fehler" id="r-datum-fehler" data-fehler-fuer="datum"></p>
+          </div>
+          <div class="feld">
+            <label for="r-uhrzeit">Uhrzeit</label>
+            <input id="r-uhrzeit" name="uhrzeit" type="time" step="900" required aria-describedby="r-uhrzeit-fehler" />
+            <p class="feld__fehler" id="r-uhrzeit-fehler" data-fehler-fuer="uhrzeit"></p>
+          </div>
+          <div class="feld">
+            <label for="r-personen">Personen</label>
+            <select id="r-personen" name="personen" required aria-describedby="r-personen-fehler r-personen-hilfe">
+              {personen.map((n) => <option value={n} selected={n === 2}>{n} {n === 1 ? 'Person' : 'Personen'}</option>)}
+            </select>
+            <p class="feld__hilfe" id="r-personen-hilfe">Mehr als {MAX_PERSONEN_ONLINE}? Bitte anrufen.</p>
+            <p class="feld__fehler" id="r-personen-fehler" data-fehler-fuer="personen"></p>
+          </div>
+          <div class="feld feld--breit">
+            <label for="r-name">Name</label>
+            <input id="r-name" name="name" type="text" required autocomplete="name" maxlength="120" aria-describedby="r-name-fehler" />
+            <p class="feld__fehler" id="r-name-fehler" data-fehler-fuer="name"></p>
+          </div>
+          <div class="feld feld--halb">
+            <label for="r-telefon">Telefon <span class="feld__wozu">für Rückfragen</span></label>
+            <input id="r-telefon" name="telefon" type="tel" required autocomplete="tel" maxlength="40" aria-describedby="r-telefon-fehler" />
+            <p class="feld__fehler" id="r-telefon-fehler" data-fehler-fuer="telefon"></p>
+          </div>
+          <div class="feld feld--halb">
+            <label for="r-email">E-Mail <span class="feld__wozu">für die Bestätigung</span></label>
+            <input id="r-email" name="email" type="email" required autocomplete="email" maxlength="180" aria-describedby="r-email-fehler" />
+            <p class="feld__fehler" id="r-email-fehler" data-fehler-fuer="email"></p>
+          </div>
+          <div class="feld feld--breit">
+            <label for="r-nachricht">Anlass oder Wunsch <span class="feld__wozu">optional, zum Beispiel Kinderstuhl</span></label>
+            <textarea id="r-nachricht" name="nachricht" rows="3" maxlength="2000" aria-describedby="r-nachricht-fehler"></textarea>
+            <p class="feld__fehler" id="r-nachricht-fehler" data-fehler-fuer="nachricht"></p>
+          </div>
+        </div>
+
+        <!-- Honigtopf: bewusst nicht "firma", siehe formulare-und-resend.md -->
+        <div class="hp" aria-hidden="true">
+          <label for="r-webadresse">Webadresse</label>
+          <input id="r-webadresse" name="webadresse" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+        <input type="hidden" name="ts" value="" data-zeitfeld />
+
+        <div class="feld feld--check">
+          <input id="r-datenschutz" name="datenschutz" type="checkbox" value="ja" required aria-describedby="r-datenschutz-fehler" />
+          <label for="r-datenschutz">
+            <span>Ich bin einverstanden, dass meine Angaben zur Bearbeitung der Reservierung verwendet werden.
+            Mehr in der <a href="/datenschutz">Datenschutzerklärung</a>.</span>
+          </label>
+          <p class="feld__fehler" id="r-datenschutz-fehler" data-fehler-fuer="datenschutz"></p>
+        </div>
+
+        {turnstileKey && <div class="formular__turnstile" data-turnstile data-sitekey={turnstileKey}></div>}
+
+        <p class="formular__meldung" role="alert" data-meldung hidden></p>
+
+        <button class="btn btn--haupt formular__senden" type="submit" data-senden>Tisch reservieren</button>
+        <p class="formular__klein text-leise">Die Anfrage ist noch keine feste Reservierung. Wir bestätigen sie Ihnen.</p>
+      </form>
+
+      <div class="formular__erfolg" data-erfolg hidden tabindex="-1">
+        <h3>Danke, Ihre Anfrage ist da.</h3>
+        <p>Sie bekommen gleich eine Eingangsbestätigung per E-Mail. Wir melden uns, sobald der Tisch steht. Wenn sich etwas ändert: <a href={betrieb.telefonLink}>{betrieb.telefon}</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .reservierung__raster { display: grid; gap: var(--raum-block) var(--raum-spalte); }
+  @media (min-width: 1100px) { .reservierung__raster { grid-template-columns: 5fr 7fr; align-items: start; } }
+
+  .reservierung__telefon { margin-block: var(--raum-8); padding: var(--raum-6); border-inline-start: var(--rand-akzent) solid var(--farbe-marke); background: var(--farbe-marke-hell); }
+  .reservierung__telefon p { margin: 0 0 var(--raum-2); }
+  .reservierung__nummer {
+    display: inline-flex; align-items: center; gap: var(--raum-3); min-height: var(--ziel-min);
+    font-family: var(--schrift-display); font-size: var(--text-h3); font-weight: 700;
+    color: var(--farbe-marke-text); text-decoration: none;
+  }
+  .reservierung__nummer:hover { text-decoration: underline; }
+  .reservierung__zeiten h3 { display: flex; align-items: center; gap: var(--raum-2); font-size: var(--text-h4); }
+  .reservierung__zeiten dl { margin: 0; display: grid; gap: var(--raum-2); }
+  .reservierung__zeiten dl div { display: grid; grid-template-columns: minmax(9rem, auto) 1fr; /* bewusst: Spalte für den längsten Wochentag */ gap: var(--raum-3); }
+  .reservierung__zeiten dt { font-weight: 600; }
+  .reservierung__zeiten dd { margin: 0; color: var(--farbe-text-leise); }
+
+  .reservierung__karte {
+    background: var(--farbe-flaeche-karte);
+    border: 1px solid var(--farbe-rahmen);
+    border-block-start: var(--rand-stark) solid var(--farbe-marke);
+    border-radius: var(--radius-m);
+    padding: var(--raum-spalte);
+    box-shadow: var(--schatten-weich);
+  }
+
+  .formular__raster { display: grid; gap: var(--raum-4); grid-template-columns: 1fr; }
+  @media (min-width: 640px) {
+    .formular__raster { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .feld { grid-column: span 2; }
+    .feld--halb { grid-column: span 3; }
+    .feld--breit { grid-column: 1 / -1; }
+  }
+  .feld { display: grid; gap: var(--raum-1); align-content: start; }
+  /* Labels sind Tippziele (sie setzen den Fokus ins Feld), deshalb mindestens 44 px hoch */
+  .feld label { font-weight: 600; min-height: var(--ziel-min); display: flex; align-items: flex-end; flex-wrap: wrap; column-gap: var(--raum-2); }
+  .feld__wozu { font-weight: 400; color: var(--farbe-text-leise); }
+  .feld input, .feld select, .feld textarea {
+    width: 100%; min-height: 3rem;
+    padding: var(--raum-2) var(--raum-3);
+    border: 2px solid var(--farbe-rahmen); border-radius: var(--radius-s);
+    background: var(--farbe-flaeche); color: var(--farbe-text);
+    font-size: var(--text-base);
+    transition: border-color var(--dauer-schnell) var(--kurve);
+  }
+  .feld input:hover, .feld select:hover, .feld textarea:hover { border-color: var(--farbe-text-leise); }
+  .feld input:focus-visible, .feld select:focus-visible, .feld textarea:focus-visible { border-color: var(--farbe-text); outline-offset: 1px; }
+  .feld [aria-invalid='true'] { border-color: var(--farbe-fehler); }
+  .feld__hilfe { margin: 0; font-size: var(--text-xs); color: var(--farbe-text-leise); }
+  .feld__fehler { margin: 0; font-size: var(--text-sm); color: var(--farbe-fehler); font-weight: 600; }
+  .feld__fehler:empty { display: none; }
+
+  .feld--check { grid-template-columns: auto 1fr; column-gap: var(--raum-3); margin-block: var(--raum-6) var(--raum-4); align-items: start; }
+  /* Eigene Checkbox mit 44 px Tippfläche, Haken aus dem Icon-Set als Maske */
+  .feld--check input {
+    appearance: none; -webkit-appearance: none; margin: 0; padding: 0; cursor: pointer;
+    width: var(--ziel-min); height: var(--ziel-min); min-height: 0;
+    border: 2px solid var(--farbe-text-leise); border-radius: var(--radius-s);
+    background: var(--farbe-flaeche);
+    transition: background-color var(--dauer-sofort) var(--kurve), border-color var(--dauer-sofort) var(--kurve);
+  }
+  .feld--check input:hover { border-color: var(--farbe-text); }
+  .feld--check input:checked {
+    background: var(--farbe-akzent) no-repeat center / 70% url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+    border-color: var(--farbe-akzent);
+  }
+  .feld--check label { font-weight: 400; align-items: center; }
+  .feld--check .feld__fehler { grid-column: 2; }
+
+  .hp label, .hp input { display: block; min-width: var(--ziel-min); min-height: var(--ziel-min); }
+  .hp { position: absolute; inset-inline-start: -9999px; /* bewusst: Honigtopf außerhalb des Bildes */ width: 1px; height: 1px; overflow: hidden; }
+
+  .formular__turnstile { margin-block-end: var(--raum-4); min-height: 4.5rem; /* bewusst: Höhe des Turnstile-Widgets, verhindert Springen */ }
+  .formular__meldung { padding: var(--raum-4); border-radius: var(--radius-s); background: var(--farbe-marke-hell); color: var(--farbe-fehler); font-weight: 600; max-width: none; }
+  .formular__senden { width: 100%; }
+  @media (min-width: 640px) { .formular__senden { width: auto; } }
+  .formular__senden[aria-busy='true'] { cursor: progress; opacity: 0.8; }
+  .formular__klein { font-size: var(--text-sm); margin-block-start: var(--raum-3); }
+
+  .formular__erfolg h3 { color: var(--farbe-erfolg); }
+  .formular__erfolg:focus { outline: none; }
+</style>
+
+<script>
+  import { pruefen, heuteBerlin } from '../../lib/reservierung-pruefung';
+
+  const form = document.querySelector<HTMLFormElement>('[data-formular]');
+  const erfolg = document.querySelector<HTMLElement>('[data-erfolg]');
+  if (form && erfolg) {
+    const meldung = form.querySelector<HTMLElement>('[data-meldung]')!;
+    const senden = form.querySelector<HTMLButtonElement>('[data-senden]')!;
+    const datum = form.querySelector<HTMLInputElement>('#r-datum')!;
+    const zeitfeld = form.querySelector<HTMLInputElement>('[data-zeitfeld]')!;
+    const TELEFON = '0209 141378';
+
+    zeitfeld.value = String(Date.now());
+    datum.min = heuteBerlin();
+
+    const daten = () => Object.fromEntries(Array.from(new FormData(form).entries()).map(([k, v]) => [k, String(v)]));
+
+    function zeigeFehler(felder: Record<string, string | undefined>, nurName?: string) {
+      form!.querySelectorAll<HTMLElement>('[data-fehler-fuer]').forEach((ziel) => {
+        const name = ziel.dataset.fehlerFuer!;
+        if (nurName && name !== nurName) return;
+        const text = felder[name] ?? '';
+        ziel.textContent = text;
+        form!.querySelector(`[name="${name}"]`)?.setAttribute('aria-invalid', String(Boolean(text)));
+      });
+    }
+
+    /*
+      Fehler erscheinen beim Absenden und verschwinden, sobald das Feld stimmt (beim Tippen).
+      Bewusst keine Prüfung beim Verlassen eines Feldes: eine Meldung, die dabei auftaucht oder
+      verschwindet, verschiebt das Formular unter dem Zeiger, und der nächste Klick (zum Beispiel
+      auf die Checkbox) geht ins Leere. Im Test so passiert.
+    */
+    const korrigiert = (e: Event) => {
+      const feld = e.target as HTMLInputElement;
+      if (!feld.name || feld.getAttribute('aria-invalid') !== 'true') return;
+      if (!pruefen(daten())[feld.name as keyof ReturnType<typeof pruefen>]) zeigeFehler({}, feld.name);
+    };
+    form.addEventListener('input', korrigiert);
+    form.addEventListener('change', korrigiert);
+
+    // Turnstile erst laden, wenn jemand das Formular benutzt: kein Fremdabruf beim Seitenaufruf
+    const turnstile = form.querySelector<HTMLElement>('[data-turnstile]');
+    let turnstileGeladen = false;
+    form.addEventListener('focusin', () => {
+      if (!turnstile || turnstileGeladen) return;
+      turnstileGeladen = true;
+      const s = document.createElement('script');
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+      s.async = true;
+      s.onload = () => (window as any).turnstile?.render(turnstile, { sitekey: turnstile.dataset.sitekey, language: 'de' });
+      document.head.append(s);
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      meldung.hidden = true;
+      const felder = pruefen(daten());
+      zeigeFehler(felder);
+      if (Object.keys(felder).length) {
+        const erstes = form.querySelector<HTMLElement>('[aria-invalid="true"]');
+        erstes?.focus();
+        return;
+      }
+
+      senden.disabled = true;
+      senden.setAttribute('aria-busy', 'true');
+      senden.textContent = 'Wird gesendet …';
+
+      try {
+        const antwort = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { accept: 'application/json' } });
+        const ergebnis = await antwort.json().catch(() => ({}));
+        if (antwort.ok && ergebnis.ok) {
+          form.hidden = true;
+          erfolg.hidden = false;
+          erfolg.focus();
+          return;
+        }
+        if (ergebnis.felder) zeigeFehler(ergebnis.felder);
+        meldung.textContent = ergebnis.fehler ?? `Das hat nicht geklappt. Bitte rufen Sie uns an: ${TELEFON}.`;
+      } catch {
+        meldung.textContent = `Keine Verbindung. Bitte versuchen Sie es noch einmal oder rufen Sie uns an: ${TELEFON}.`;
+      }
+      meldung.hidden = false;
+      senden.disabled = false;
+      senden.removeAttribute('aria-busy');
+      senden.textContent = 'Tisch reservieren';
+      (window as any).turnstile?.reset?.();
+    });
+  }
+</script>

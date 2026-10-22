@@ -1,0 +1,206 @@
+---
+/**
+ * Kopfleiste: Logo, Sprungmarken, Telefon und die eine Hauptaufforderung.
+ * Unter 861 px: Menue als <dialog> (Fokusfalle und Escape vom Browser) und ein fester
+ * Mobilbalken mit Anrufen und Reservieren, weil die meisten Gaeste am Handy kommen.
+ * Das Menue liegt als Geschwister der Kopfleiste, nicht als Kind: ein transformiertes
+ * Elternteil wuerde position: fixed brechen.
+ */
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import logo from '../assets/bilder/logo-haus-witte.png';
+import { betrieb } from '../data/betrieb';
+
+interface Props { start?: boolean }
+const { start = true } = Astro.props;
+const basis = start ? '' : '/';
+
+const navigation = [
+  { href: `${basis}#speisen`, text: 'Speisen' },
+  { href: `${basis}#speisekarte`, text: 'Speisekarte' },
+  { href: `${basis}#haus`, text: 'Das Haus' },
+  { href: `${basis}#bewertungen`, text: 'Bewertungen' },
+  { href: `${basis}#anfahrt`, text: 'Anfahrt' },
+];
+---
+<header class="kopf" data-kopf>
+  <div class="kopf__innen inhalt--weit">
+    <a class="kopf__logo" href={start ? '#top' : '/'}>
+      <Image src={logo} alt={`${betrieb.name}, zur Startseite`} width={163} height={116} loading="eager" />
+    </a>
+
+    <nav class="kopf__nav" aria-label="Hauptnavigation">
+      <ul>
+        {navigation.map((punkt) => (
+          <li><a href={punkt.href}>{punkt.text}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="kopf__aktion">
+      <a class="kopf__telefon" href={betrieb.telefonLink}>
+        <Icon name="telefon" />
+        <span>{betrieb.telefon}</span>
+      </a>
+      <a class="btn btn--haupt kopf__cta" href={`${basis}#reservierung`}>Tisch reservieren</a>
+      <button class="kopf__menueknopf" type="button" aria-haspopup="dialog" aria-controls="menue" data-menue-oeffnen>
+        <Icon name="menue" />
+        <span class="sr-only">Menü öffnen</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<dialog class="menue" id="menue" aria-label="Menü" data-menue>
+  <div class="menue__kopf">
+    <span class="menue__titel">{betrieb.kurzname}</span>
+    <button class="menue__zu" type="button" data-menue-schliessen>
+      <Icon name="schliessen" />
+      <span class="sr-only">Menü schließen</span>
+    </button>
+  </div>
+  <nav aria-label="Mobile Navigation">
+    <ul class="menue__liste">
+      {navigation.map((punkt) => (
+        <li><a href={punkt.href} data-menue-link>{punkt.text}</a></li>
+      ))}
+    </ul>
+  </nav>
+  <div class="menue__fuss">
+    <a class="btn btn--haupt" href={`${basis}#reservierung`} data-menue-link>Tisch reservieren</a>
+    <a class="btn btn--zweit" href={betrieb.telefonLink}><Icon name="telefon" />{betrieb.telefon}</a>
+    <p class="menue__adresse">{betrieb.strasse}, {betrieb.plz} {betrieb.ort}</p>
+  </div>
+</dialog>
+
+<div class="mobilbalken" aria-label="Schnellzugriff">
+  <a class="btn btn--zweit" href={betrieb.telefonLink}><Icon name="telefon" />Anrufen</a>
+  <a class="btn btn--haupt" href={`${basis}#reservierung`}>Tisch reservieren</a>
+</div>
+
+<style>
+  .kopf {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--z-kopf);
+    background: var(--farbe-flaeche);
+    border-block-end: 1px solid var(--farbe-rahmen);
+  }
+  .kopf__innen {
+    display: flex;
+    align-items: center;
+    gap: var(--raum-6);
+    min-height: var(--hoehe-kopf);
+  }
+  .kopf__logo { display: block; flex: none; padding-block: var(--raum-1); }
+  .kopf__logo img { height: calc(var(--hoehe-kopf) - var(--raum-3)); width: auto; }
+
+  .kopf__nav { margin-inline-start: auto; }
+  .kopf__nav ul { display: flex; gap: var(--raum-1); list-style: none; margin: 0; padding: 0; }
+  .kopf__nav a {
+    display: block;
+    padding: var(--raum-3) var(--raum-3);
+    color: var(--farbe-text);
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: var(--radius-s);
+    transition: color var(--dauer-schnell) var(--kurve), background-color var(--dauer-schnell) var(--kurve);
+  }
+  .kopf__nav a:hover { color: var(--farbe-marke-text); background: var(--farbe-marke-hell); }
+
+  .kopf__aktion { display: flex; align-items: center; gap: var(--raum-4); }
+  .kopf__telefon {
+    display: inline-flex; align-items: center; gap: var(--raum-2);
+    color: var(--farbe-text); font-weight: 600; text-decoration: none; white-space: nowrap;
+    min-height: var(--ziel-min);
+  }
+  .kopf__telefon:hover { color: var(--farbe-marke-text); }
+  .kopf__telefon :global(.icon) { color: var(--farbe-marke-text); }
+
+  .kopf__menueknopf {
+    display: none;
+    width: 3rem; height: 3rem;
+    align-items: center; justify-content: center;
+    background: transparent; border: 2px solid var(--farbe-text); border-radius: var(--radius-s);
+    cursor: pointer;
+  }
+
+  /* Unter 1100 px wird es eng: Telefon nur noch als Icon im Mobilbalken, Navigation ins Menue */
+  @media (max-width: 1099px) {
+    .kopf__nav, .kopf__telefon { display: none; }
+    .kopf__aktion { margin-inline-start: auto; }
+    .kopf__menueknopf { display: inline-flex; }
+  }
+  @media (max-width: 860px) {
+    .kopf__cta { display: none; }
+  }
+
+  /* Menue als Seitenpanel */
+  .menue {
+    margin: 0 0 0 auto;
+    width: min(24rem, 100%);
+    height: 100dvh;
+    max-height: none;
+    border: 0;
+    padding: var(--raum-6);
+    background: var(--farbe-flaeche-dunkel);
+    color: var(--farbe-text-invers);
+    --farbe-fokus: var(--farbe-marke-auf-dunkel);
+  }
+  .menue[open] { display: flex; flex-direction: column; gap: var(--raum-8); }
+  .menue::backdrop { background: var(--farbe-schleier); }
+  @media (prefers-reduced-motion: no-preference) {
+    .menue[open] { animation: menue-ein var(--dauer-lang) var(--kurve-eintritt); }
+  }
+  @keyframes menue-ein { from { transform: translateX(100%); } to { transform: none; } }
+  .menue__kopf { display: flex; justify-content: space-between; align-items: center; }
+  .menue__titel { font-family: var(--schrift-display); font-size: var(--text-h4); font-weight: 700; }
+  .menue__zu {
+    width: 3rem; height: 3rem; display: inline-flex; align-items: center; justify-content: center;
+    background: transparent; border: 2px solid var(--farbe-text-invers-leise); border-radius: var(--radius-s);
+    color: var(--farbe-text-invers); cursor: pointer;
+  }
+  .menue__liste { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--raum-1); }
+  .menue__liste a {
+    display: block; padding: var(--raum-3) 0;
+    font-family: var(--schrift-display); font-size: var(--text-h3); font-weight: 600;
+    color: var(--farbe-text-invers); text-decoration: none;
+  }
+  .menue__liste a:hover { color: var(--farbe-marke-auf-dunkel); }
+  .menue__fuss { margin-block-start: auto; display: grid; gap: var(--raum-3); }
+  .menue__fuss .btn--zweit { color: var(--farbe-text-invers); border-color: var(--farbe-text-invers-leise); }
+  .menue__fuss .btn--haupt { background: var(--farbe-akzent); border-color: var(--rot-300); }
+  .menue__adresse { color: var(--farbe-text-invers-leise); font-size: var(--text-sm); margin: 0; }
+
+  /* Mobilbalken */
+  .mobilbalken { display: none; }
+  @media (max-width: 860px) {
+    .mobilbalken {
+      position: fixed; inset-inline: 0; inset-block-end: 0; z-index: var(--z-mobilbalken);
+      display: grid; grid-template-columns: 1fr 1.4fr; gap: var(--raum-2);
+      padding: var(--raum-2) var(--rand-seite) calc(var(--raum-2) + env(safe-area-inset-bottom));
+      background: var(--farbe-flaeche);
+      border-block-start: 1px solid var(--farbe-rahmen);
+      box-shadow: var(--schatten-weich);
+    }
+    .mobilbalken .btn { padding-inline: var(--raum-3); }
+  }
+</style>
+
+<script>
+  const menue = document.querySelector<HTMLDialogElement>('[data-menue]');
+  const oeffnen = document.querySelector<HTMLButtonElement>('[data-menue-oeffnen]');
+  if (menue && oeffnen) {
+    oeffnen.addEventListener('click', () => menue.showModal());
+    menue.querySelector('[data-menue-schliessen]')?.addEventListener('click', () => menue.close());
+    menue.querySelectorAll('[data-menue-link]').forEach((link) =>
+      link.addEventListener('click', () => menue.close())
+    );
+    // Klick auf den Hintergrund schliesst
+    menue.addEventListener('click', (e) => { if (e.target === menue) menue.close(); });
+    // Fokus zurueck auf den Ausloeser
+    menue.addEventListener('close', () => oeffnen.focus());
+    // Wird das Fenster breit, darf kein offenes Menue haengen bleiben
+    matchMedia('(min-width: 1100px)').addEventListener('change', (e) => { if (e.matches) menue.close(); });
+  }
+</script>

@@ -1,0 +1,27 @@
+---
+/**
+ * 404 nach der Vorlage des Skills: echter 404-Status über 404.html, Kopf und Fuß wie überall,
+ * ein Satz Erklärung, Wege weiter, noindex, keine automatische Weiterleitung.
+ */
+import Basis from '../layouts/Basis.astro';
+import { betrieb } from '../data/betrieb';
+---
+<Basis titel="Seite nicht gefunden | Haus Witte" beschreibung="Diese Seite gibt es nicht. Hier geht es weiter." noindex>
+  <section class="sektion">
+    <div class="inhalt fehlerseite">
+      <p class="text-leise">Fehler 404</p>
+      <h1>Diese Seite gibt es nicht.</h1>
+      <p class="text-gross">Die Adresse existiert nicht oder wurde verschoben. Hier geht es weiter:</p>
+      <div class="fehlerseite__wege">
+        <a class="btn btn--haupt" href="/#reservierung">Tisch reservieren</a>
+        <a class="btn btn--zweit" href="/#speisekarte">Speisekarte ansehen</a>
+        <a class="btn btn--zweit" href={betrieb.telefonLink}>{betrieb.telefon}</a>
+      </div>
+    </div>
+  </section>
+</Basis>
+
+<style>
+  .fehlerseite { min-height: 50svh; }
+  .fehlerseite__wege { display: flex; flex-wrap: wrap; gap: var(--raum-3); margin-block-start: var(--raum-8); }
+</style>

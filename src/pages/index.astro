@@ -1,0 +1,29 @@
+---
+import Basis from '../layouts/Basis.astro';
+import JsonLd from '../components/JsonLd.astro';
+import Held from '../components/sektionen/Held.astro';
+import Speisen from '../components/sektionen/Speisen.astro';
+import Qualitaet from '../components/sektionen/Qualitaet.astro';
+import Haus from '../components/sektionen/Haus.astro';
+import Speisekarte from '../components/sektionen/Speisekarte.astro';
+import BewertungsLeiste from '../components/sektionen/BewertungsLeiste.astro';
+import Bewertungen from '../components/sektionen/Bewertungen.astro';
+import Reservierung from '../components/sektionen/Reservierung.astro';
+import Anfahrt from '../components/sektionen/Anfahrt.astro';
+---
+<Basis
+  titel="Haus Witte Gelsenkirchen: Steaks vom Holzkohlengrill"
+  beschreibung="Steaks vom Holzkohlengrill aus argentinischem Black Ranch Rindfleisch, Mittagstisch mit Salatbar. Ückendorfer Straße 205, Gelsenkirchen. Tisch reservieren."
+  start
+>
+  <JsonLd slot="kopf" />
+  <Held />
+  <BewertungsLeiste />
+  <Speisen />
+  <Speisekarte />
+  <Qualitaet />
+  <Haus />
+  <Bewertungen />
+  <Reservierung />
+  <Anfahrt />
+</Basis>

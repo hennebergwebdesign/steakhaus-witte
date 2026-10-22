@@ -1,0 +1,133 @@
+---
+/**
+ * Held: Vollbild der Fassade bei Nacht mit der Leuchtschrift, Text unten links auf einem
+ * Verlauf aus Holzkohle. Grund: das Haus an der Ückendorfer Straße ist das, was Stammgäste
+ * wiedererkennen und Neue suchen; kein anderes Steakhaus hat dieses Bild (Tauschtest).
+ * Das Steak folgt direkt in der nächsten Sektion. Höhe 100svh ist harte Grenze.
+ * Bild 1360 x 766 px aus dem Upload des Kunden (bilder-kunde, unnamed (4).webp).
+ */
+import { getImage } from 'astro:assets';
+import fassade from '../../assets/bilder/fassade-nacht.webp';
+import fassadeHoch from '../../assets/bilder/fassade-nacht-hoch.webp';
+import { betrieb } from '../../data/betrieb';
+
+/*
+  Bildauswahl je Format (Art Direction): hochkant bis 640 px, damit die Leuchtschrift über dem
+  Text steht und nicht dahinter. Astros <Picture> kann keine zwei Motive, deshalb getImage.
+*/
+const breit = await Promise.all(
+  (['avif', 'webp'] as const).map(async (format) => ({
+    format,
+    bilder: await Promise.all([640, 960, 1360].map((width) => getImage({ src: fassade, width, format }))),
+  }))
+);
+const hoch = await Promise.all(
+  (['avif', 'webp'] as const).map(async (format) => ({
+    format,
+    bilder: await Promise.all([400, 765].map((width) => getImage({ src: fassadeHoch, width, format }))),
+  }))
+);
+const rueckfall = await getImage({ src: fassade, width: 1360, format: 'webp' });
+const srcset = (bilder: { src: string; options: { width?: number } }[]) =>
+  bilder.map((b) => `${b.src} ${b.options.width}w`).join(', ');
+---
+<section class="held" aria-labelledby="held-titel">
+  <div class="held__bild">
+    <picture>
+      {hoch.map((h) => <source type={`image/${h.format}`} media="(max-width: 640px)" srcset={srcset(h.bilder)} sizes="100vw" />)}
+      {breit.map((b) => <source type={`image/${b.format}`} srcset={srcset(b.bilder)} sizes="100vw" />)}
+      <img
+        src={rueckfall.src}
+        width={fassade.width}
+        height={fassade.height}
+        alt="Haus Witte bei Nacht: Altbaufassade mit beleuchteten Rundbogenfenstern und der Leuchtschrift Steakhouse Haus Witte Restaurant"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+    </picture>
+  </div>
+  <div class="held__glut" aria-hidden="true"></div>
+  <div class="held__innen inhalt--weit">
+    <div class="held__text">
+      <h1 id="held-titel" class="held__titel">Steaks vom Holzkohlengrill in&nbsp;Gelsenkirchen</h1>
+      <p class="held__unterzeile" data-copy-vorschlag>
+        Argentinisches Rindfleisch von Black Ranch, über Holzkohle gegrillt. Seit {betrieb.seit} an der Ückendorfer Straße.
+      </p>
+      <div class="held__aktionen">
+        <a class="btn btn--haupt" href="#reservierung">Tisch reservieren</a>
+        <a class="btn btn--zweit" href="#speisekarte">Speisekarte ansehen</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .held {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    /* harte Grenze: volle sichtbare Höhe, die sticky Kopfleiste eingerechnet */
+    min-height: calc(100svh - var(--hoehe-kopf));
+    display: flex;
+    align-items: flex-end;
+    background: var(--farbe-flaeche-dunkel);
+    color: var(--farbe-text-invers);
+    --farbe-fokus: var(--farbe-marke-auf-dunkel);
+  }
+  .held__bild { position: absolute; inset: 0; z-index: -2; }
+  .held__bild :global(picture), .held__bild :global(img) { width: 100%; height: 100%; }
+  .held__bild :global(img) { object-fit: cover; object-position: 60% 40%; }
+
+  /*
+    Lesbarkeit: Holzkohle von unten links, darüber die Glut. Der Text steht nur auf der
+    abgedunkelten Fläche (unter 15 % Restbild), damit 4,5:1 auch über den Fenstern hält.
+  */
+  .held__glut {
+    position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      linear-gradient(to top, var(--farbe-flaeche-dunkel) 0%, color-mix(in oklab, var(--farbe-flaeche-dunkel) 88%, transparent) 30%, color-mix(in oklab, var(--farbe-flaeche-dunkel) 35%, transparent) 62%, transparent 85%),
+      linear-gradient(to right, color-mix(in oklab, var(--farbe-flaeche-dunkel) 70%, transparent) 0%, transparent 60%),
+      var(--verlauf-glut);
+  }
+  .held__innen { padding-block: var(--raum-block); }
+  .held__text { max-width: 54rem; }
+  .held__titel { font-size: var(--text-held); margin-block-end: var(--raum-6); text-shadow: var(--schatten-text); }
+  .held__unterzeile {
+    font-size: var(--text-lg);
+    color: var(--farbe-text-invers);
+    max-width: 36rem;
+    margin-block-end: var(--raum-8);
+  }
+  .held__aktionen { display: flex; flex-wrap: wrap; gap: var(--raum-3); }
+
+  @media (max-width: 640px) {
+    .held__bild :global(img) { object-position: 50% 0%; }
+    /* Mobil steht der Text über der Leuchtschrift: kräftiger abdunkeln, gemessen 4,5:1 an der hellsten Stelle */
+    .held__glut {
+      background:
+        linear-gradient(to top, var(--farbe-flaeche-dunkel) 0%, color-mix(in oklab, var(--farbe-flaeche-dunkel) 90%, transparent) 50%, color-mix(in oklab, var(--farbe-flaeche-dunkel) 20%, transparent) 80%, transparent 100%),
+        var(--verlauf-glut);
+    }
+  }
+  /* Der Mobilbalken liegt fest unten: die Knöpfe im Held dürfen nicht darunter verschwinden */
+  @media (max-width: 860px) {
+    .held__innen { padding-block-end: calc(var(--raum-block) + var(--hoehe-mobilbalken)); }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .held__text > * { animation: held-ein var(--dauer-lang) var(--kurve-eintritt) both; }
+    .held__unterzeile { animation-delay: 80ms; }
+    .held__aktionen { animation-delay: 160ms; }
+    .held__bild :global(img) { animation: held-bild var(--dauer-sequenz) var(--kurve-eintritt) both; }
+  }
+  @keyframes held-ein {
+    from { opacity: 0; translate: 0 var(--weg-gross); }
+    to { opacity: 1; translate: 0 0; }
+  }
+  /* Das Bild setzt sich ruhig ab, wie das Licht beim Betreten */
+  @keyframes held-bild {
+    from { opacity: 0.4; scale: 1.04; }
+    to { opacity: 1; scale: 1; }
+  }
+</style>

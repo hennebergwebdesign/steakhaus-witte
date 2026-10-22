@@ -1,0 +1,32 @@
+---
+/**
+ * Ergebnisseite für Besucher ohne JavaScript. Die Route leitet nach dem Absenden hierher,
+ * mit ?fehler=… im Fehlerfall. Nicht in der Sitemap, noindex.
+ */
+export const prerender = false;
+import Basis from '../layouts/Basis.astro';
+import { betrieb } from '../data/betrieb';
+
+const fehler = Astro.url.searchParams.get('fehler');
+---
+<Basis titel="Reservierungsanfrage | Haus Witte" beschreibung="Ergebnis Ihrer Reservierungsanfrage bei Haus Witte." noindex>
+  <section class="sektion">
+    <div class="inhalt">
+      {fehler ? (
+        <>
+          <h1>Das hat leider nicht geklappt</h1>
+          <p class="text-gross">{fehler}</p>
+          <p><a class="btn btn--haupt" href="/#reservierung">Zurück zum Formular</a></p>
+          <p>Oder rufen Sie uns an: <a href={betrieb.telefonLink}>{betrieb.telefon}</a></p>
+        </>
+      ) : (
+        <>
+          <h1>Danke, Ihre Anfrage ist da</h1>
+          <p class="text-gross">Sie bekommen gleich eine Eingangsbestätigung per E-Mail. Wir melden uns, sobald der Tisch steht.</p>
+          <p>Wenn sich etwas ändert: <a href={betrieb.telefonLink}>{betrieb.telefon}</a></p>
+          <p><a class="btn btn--zweit" href="/">Zur Startseite</a></p>
+        </>
+      )}
+    </div>
+  </section>
+</Basis>

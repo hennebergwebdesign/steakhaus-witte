@@ -1,0 +1,465 @@
+---
+/**
+ * Speisekarte als Buch: der eine eigene Abschnitt dieses Projekts und der orchestrierte Moment
+ * (marke.json, motion.signatur_moment). Eigenbau ohne Bibliothek, weil drei Dinge sicher sein
+ * muessen, die Flipbook-Bibliotheken selten koennen:
+ *
+ * 1. Ohne JavaScript ist jede Seite lesbar: alle Seiten stehen als Papierbogen nebeneinander.
+ * 2. Der Text ist echter Text im HTML (lesbar fuer Suchmaschinen, Vorleser, Uebersetzer),
+ *    kein Bild und kein Canvas.
+ * 3. Tastatur (Pfeiltasten, Knoepfe), Wischen, reduzierte Bewegung, und nicht sichtbare Seiten
+ *    sind inert, damit der Fokus nicht auf verdeckten Seiten landet.
+ *
+ * Ab 1100 px eine Doppelseite mit 3D-Umblaettern, darunter eine Seite, die beim Wechsel umschlaegt.
+ * Aufbau: je zwei Seiten bilden ein Blatt (Vorderseite, Rueckseite).
+ */
+import { Image } from 'astro:assets';
+import Icon from '../Icon.astro';
+import wortmarke from '../../assets/bilder/wortmarke-haus-witte-hell.png';
+import { seiten, preis, kapitel } from '../../data/speisekarte';
+import { betrieb } from '../../data/betrieb';
+
+const blaetter: (typeof seiten)[] = [];
+for (let i = 0; i < seiten.length; i += 2) blaetter.push(seiten.slice(i, i + 2));
+const gesamt = seiten.length;
+---
+<section class="sektion sektion--dunkel karte" id="speisekarte" aria-labelledby="karte-titel">
+  <div class="karte__glut" aria-hidden="true"></div>
+  <div class="inhalt--weit">
+    <div class="kopfzeile karte__kopf">
+      <h2 id="karte-titel">Die Speisekarte</h2>
+      <p class="text-leise" data-copy-vorschlag>{gesamt} Seiten zum Umblättern, von der Mittagskarte bis zum Dessert. Alle Preise in Euro inklusive Mehrwertsteuer.</p>
+    </div>
+
+    <nav class="karte__kapitel" aria-label="Kapitel der Speisekarte">
+      <ul>
+        {kapitel.map((k) => (
+          <li><a href={`#karte-${k.id}`} data-karte-sprung={k.index}>{k.name}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="buch" data-buch data-seiten={gesamt}>
+      <div class="buch__buehne" data-buch-buehne>
+        {blaetter.map((paar, b) => (
+          <div class="blatt" data-blatt={b}>
+            {paar.map((seite, j) => {
+              const nummer = b * 2 + j + 1;
+              return (
+                <article
+                  class:list={['seite', j === 0 ? 'seite--vorn' : 'seite--hinten', `seite--art-${seite.art}`]}
+                  id={`karte-${seite.id}`}
+                  data-seite={nummer - 1}
+                  aria-label={`Seite ${nummer} von ${gesamt}`}
+                  tabindex="-1"
+                >
+                  {seite.art === 'deckel' && (
+                    <div class="deckel">
+                      <Image class="deckel__marke" src={wortmarke} alt="Haus Witte, Steakhouse, Holzkohlengrill" widths={[480, 960]} sizes="(min-width: 1100px) 26rem, 80vw" loading="lazy" />
+                      <p class="deckel__titel">Speisekarte</p>
+                      <p class="deckel__seit">seit {betrieb.seit}</p>
+                    </div>
+                  )}
+
+                  {seite.art === 'karte' && (
+                    <div class="kartenseite">
+                      <header class="kartenseite__kopf">
+                        <h3>{seite.titel}</h3>
+                        {seite.hinweis && <p class="kartenseite__hinweis">{seite.hinweis}</p>}
+                        {seite.id === 'mittagskarte' && (
+                          <p class="kartenseite__stand">
+                            Wechselt monatlich. Stand: {seite.stand ?? '[[FEHLT: Monat der aktuellen Mittagskarte]]'}
+                          </p>
+                        )}
+                      </header>
+                      {seite.eintraege && (
+                        <ul class="gerichte">
+                          {seite.eintraege.map((e) => (
+                            <li class="gericht">
+                              <div class="gericht__zeile">
+                                {e.nr && <span class="gericht__nr">{e.nr}</span>}
+                                <span class="gericht__name">{e.name}</span>
+                                <span class="gericht__punkte" aria-hidden="true"></span>
+                                <span class="gericht__preis">{e.preis !== null ? preis(e.preis) : '[[FEHLT: Preis]]'}</span>
+                              </div>
+                              {e.text && <p class="gericht__text">{e.text}</p>}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      {seite.fehlt && <p class="kartenseite__fehlt">[[FEHLT: {seite.fehlt}]]</p>}
+                    </div>
+                  )}
+
+                  {seite.art === 'rueck' && (
+                    <div class="deckel deckel--rueck">
+                      <p class="deckel__zeile">Mittwochs haben wir Ruhetag</p>
+                      <p class="deckel__klein">(außer an den Feiertagen)</p>
+                      <p class="deckel__linie" aria-hidden="true"></p>
+                      <p class="deckel__klein" data-copy-vorschlag>Informationen zu Allergenen und Zusatzstoffen erhalten Sie bei unserem Service.</p>
+                      <p class="deckel__zeile">Reservierung<br /><a href={betrieb.telefonLink}>{betrieb.telefon}</a></p>
+                    </div>
+                  )}
+
+                  <p class="seite__nummer" aria-hidden="true">{nummer}</p>
+                </article>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+
+      <div class="buch__steuerung" data-buch-steuerung hidden>
+        <button class="buch__knopf" type="button" data-buch-zurueck>
+          <Icon name="pfeil-links" /><span class="sr-only">Vorherige Seite</span>
+        </button>
+        <p class="buch__stand" aria-live="polite" data-buch-stand>Deckblatt</p>
+        <button class="buch__knopf" type="button" data-buch-weiter>
+          <Icon name="pfeil-rechts" /><span class="sr-only">Nächste Seite</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .karte { position: relative; isolation: isolate; overflow: hidden; }
+  .karte__glut {
+    position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: var(--verlauf-glut);
+    opacity: 0.7;
+  }
+  .karte__kopf { margin-inline: auto; text-align: center; }
+  .karte__kopf p { margin-inline: auto; }
+
+  /* Kapitelleiste */
+  .karte__kapitel ul {
+    list-style: none; margin: 0 0 var(--raum-8); padding: 0;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: var(--raum-2);
+  }
+  .karte__kapitel a {
+    display: inline-flex; align-items: center; min-height: var(--ziel-min);
+    padding: var(--raum-2) var(--raum-4);
+    border: 1px solid var(--farbe-rahmen-dunkel); border-radius: var(--radius-s);
+    color: var(--farbe-text-invers); text-decoration: none; font-weight: 600;
+    transition: background-color var(--dauer-schnell) var(--kurve), border-color var(--dauer-schnell) var(--kurve);
+  }
+  .karte__kapitel a:hover { background: var(--farbe-flaeche-dunkel-2); border-color: var(--farbe-marke-auf-dunkel); color: var(--farbe-text-invers); }
+  .karte__kapitel a[aria-current='true'] { border-color: var(--farbe-marke-auf-dunkel); background: var(--farbe-flaeche-dunkel-2); }
+
+  /* ---------------------------------------------------------------
+     SEITEN: Papier, hell, gut lesbar (Alltagsprobe aus 26, Punkt 11)
+     --------------------------------------------------------------- */
+  .seite {
+    position: relative;
+    background: var(--farbe-flaeche-karte);
+    color: var(--farbe-text);
+    padding: var(--raum-8) var(--raum-8) var(--raum-12);
+    border-radius: var(--radius-0);
+    min-height: 36rem;
+    --farbe-fokus: var(--farbe-text);
+  }
+  .seite:focus { outline: none; }
+  .seite__nummer {
+    position: absolute; inset-block-end: var(--raum-4); inset-inline: 0;
+    text-align: center; font-size: var(--text-xs); color: var(--farbe-text-leise); margin: 0;
+  }
+  .seite--art-deckel, .seite--art-rueck {
+    background: var(--farbe-marke);
+    color: var(--farbe-text-invers);
+    --farbe-fokus: var(--farbe-marke-auf-dunkel);
+  }
+  .seite--art-deckel .seite__nummer, .seite--art-rueck .seite__nummer { color: var(--rot-200); }
+
+  .deckel {
+    height: 100%;
+    min-height: 30rem;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; gap: var(--raum-3);
+    border: 1px solid var(--rot-300);
+    outline: 1px solid var(--rot-300); outline-offset: calc(var(--raum-2) * -1);
+    padding: var(--raum-8);
+  }
+  .deckel p { margin: 0; max-width: none; }
+  .deckel__marke { width: 100%; max-width: 26rem; height: auto; }
+  .deckel__name { font-family: var(--schrift-display); font-weight: 700; font-size: var(--text-h1); line-height: var(--zeilenhoehe-eng); }
+  .deckel__linie { width: 60%; height: 2px; background: var(--rot-300); }
+  .deckel__zeile { font-family: var(--schrift-display); font-weight: 600; font-size: var(--text-h4); }
+  .deckel__titel { margin-block-start: var(--raum-8) !important; font-size: var(--text-lg); letter-spacing: var(--sperrung-label); text-transform: uppercase; }
+  .deckel__seit, .deckel__klein { color: var(--rot-50); font-size: var(--text-sm); }
+  .deckel a { color: var(--farbe-text-invers); }
+
+  .kartenseite__kopf { text-align: center; margin-block-end: var(--raum-6); padding-block-end: var(--raum-4); border-block-end: 2px solid var(--farbe-marke); }
+  .kartenseite__kopf h3 { color: var(--farbe-marke-text); margin-block-end: var(--raum-2); }
+  .kartenseite__hinweis, .kartenseite__stand { margin: var(--raum-1) auto 0; font-size: var(--text-sm); color: var(--farbe-text-leise); max-width: var(--breite-schmal); }
+  .kartenseite__fehlt { font-weight: 600; color: var(--farbe-fehler); text-align: center; margin: var(--raum-12) auto; }
+
+  .gerichte { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--raum-4); }
+  .gericht__zeile { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--raum-2); }
+  .gericht__nr { font-size: var(--text-xs); color: var(--farbe-text-leise); font-variant-numeric: tabular-nums; min-width: calc(var(--raum-8) + var(--raum-1)); }
+  .gericht__name { font-family: var(--schrift-display); font-weight: 600; font-size: var(--text-h4); line-height: var(--zeilenhoehe-mittel); }
+  .gericht__punkte { flex: 1; min-width: var(--raum-4); border-block-end: 2px dotted var(--farbe-rahmen); transform: translateY(-0.3em); }
+  .gericht__preis { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--farbe-marke-text); }
+  .gericht__text { margin: var(--raum-1) 0 0; font-size: var(--text-sm); color: var(--farbe-text-leise); max-width: none; }
+  .seite--art-karte .gericht:has(.gericht__nr) .gericht__text { padding-inline-start: calc(var(--raum-8) + var(--raum-1) + var(--raum-2)); }
+
+  /* ---------------------------------------------------------------
+     OHNE JAVASCRIPT: alle Seiten als Bögen nebeneinander, lesbar
+     --------------------------------------------------------------- */
+  .buch:not(.buch--aktiv) .buch__buehne {
+    display: grid; gap: var(--raum-6);
+    grid-template-columns: repeat(auto-fit, minmax(min(26rem, 100%), 1fr));
+  }
+  .buch:not(.buch--aktiv) .blatt { display: contents; }
+
+  /* ---------------------------------------------------------------
+     MIT JAVASCRIPT: gemeinsame Basis
+     --------------------------------------------------------------- */
+  .buch--aktiv { max-width: var(--breite-buch); margin-inline: auto; }
+  .buch--aktiv .buch__buehne { display: grid; position: relative; }
+  /* Grid-Kinder dürfen schmaler werden als ihr längstes Wort, sonst läuft die Seite bei 320 px über */
+  .buch__buehne > *, .buch__buehne .seite { min-width: 0; }
+  .buch--aktiv .seite { box-shadow: var(--schatten-buch); }
+
+  .buch__steuerung {
+    display: flex; align-items: center; justify-content: center; gap: var(--raum-4);
+    margin-block-start: var(--raum-8);
+  }
+  .buch__steuerung[hidden] { display: none; }
+  .buch__stand { margin: 0; flex: 0 1 calc(var(--raum-12) * 4); min-width: 0; text-align: center; color: var(--farbe-text-invers-leise); font-variant-numeric: tabular-nums; }
+  .buch__knopf {
+    width: 3.25rem; height: 3.25rem; flex: none; display: inline-flex; align-items: center; justify-content: center;
+    border-radius: var(--radius-rund); border: 2px solid var(--farbe-text-invers-leise);
+    background: transparent; color: var(--farbe-text-invers); cursor: pointer;
+    transition: background-color var(--dauer-schnell) var(--kurve), border-color var(--dauer-schnell) var(--kurve), opacity var(--dauer-schnell) var(--kurve);
+  }
+  .buch__knopf:hover:not(:disabled) { background: var(--farbe-akzent); border-color: var(--rot-300); }
+  .buch__knopf:disabled { opacity: 0.35; cursor: default; }
+
+  /* ---------------------------------------------------------------
+     DOPPELSEITE (ab 1100 px): Blätter liegen rechts und drehen um den Bund
+     --------------------------------------------------------------- */
+  .buch--doppel .buch__buehne {
+    grid-template-columns: 1fr 1fr;
+    perspective: 2600px;
+    transition: transform var(--dauer-lang) var(--kurve-wechsel);
+  }
+  /* geschlossen: Deckblatt in die Mitte, am Ende die Rückseite in die Mitte */
+  .buch--doppel[data-zustand='zu'] .buch__buehne { transform: translateX(-25%); }
+  .buch--doppel[data-zustand='ende'] .buch__buehne { transform: translateX(25%); }
+
+  .buch--doppel .blatt {
+    grid-column: 2; grid-row: 1;
+    display: grid;
+    position: relative;
+    transform-style: preserve-3d;
+    transform-origin: left center;
+    transition: transform var(--dauer-lang) var(--kurve-wechsel);
+  }
+  .buch--doppel .blatt.ist-umgeblaettert { transform: rotateY(-180deg); }
+  .buch--doppel .seite { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .buch--doppel .seite--hinten { transform: rotateY(180deg); }
+  /* Schatten am Bund: rechte Seite links dunkel, linke Seite rechts dunkel */
+  .buch--doppel .seite--vorn::before,
+  .buch--doppel .seite--hinten::before {
+    content: ''; position: absolute; inset-block: 0; width: var(--raum-12); pointer-events: none;
+  }
+  .buch--doppel .seite--vorn::before { inset-inline-start: 0; background: linear-gradient(to right, var(--schatten-bund), transparent); }
+  .buch--doppel .seite--hinten::before { inset-inline-end: 0; background: linear-gradient(to left, var(--schatten-bund), transparent); }
+
+  /* ---------------------------------------------------------------
+     EINZELSEITE (unter 1100 px): eine Seite, die beim Wechsel umschlägt
+     --------------------------------------------------------------- */
+  .buch--einzel { max-width: var(--breite-buch-einzel); }
+  .buch--einzel .blatt { display: contents; }
+  .buch--einzel .seite { grid-area: 1 / 1; visibility: hidden; padding: var(--raum-6) var(--raum-6) var(--raum-12); }
+  .buch--einzel .seite.ist-sichtbar { visibility: visible; }
+  .buch--einzel .seite.schlaegt-um { visibility: visible; z-index: 2; transform-origin: left center; animation: umschlagen var(--dauer-lang) var(--kurve-austritt) both; }
+  .buch--einzel .seite.kommt-zurueck { z-index: 2; transform-origin: left center; animation: zurueckschlagen var(--dauer-lang) var(--kurve-eintritt) both; }
+  @keyframes umschlagen {
+    from { transform: perspective(1800px) rotateY(0); }
+    to { transform: perspective(1800px) rotateY(-100deg); opacity: 0; }
+  }
+  @keyframes zurueckschlagen {
+    from { transform: perspective(1800px) rotateY(-100deg); opacity: 0; }
+    to { transform: perspective(1800px) rotateY(0); opacity: 1; }
+  }
+
+  /* Reduzierte Bewegung: kein Drehen, kein Verschieben, nur der Wechsel */
+  @media (prefers-reduced-motion: reduce) {
+    .buch--doppel .buch__buehne, .buch--doppel .blatt { transition: none; }
+    .buch--einzel .seite.schlaegt-um, .buch--einzel .seite.kommt-zurueck { animation: none; }
+    .buch--einzel .seite.schlaegt-um { visibility: hidden; }
+  }
+
+  @media (max-width: 480px) {
+    .gericht__nr { min-width: var(--raum-8); }
+    .gericht__name { font-size: var(--text-base); }
+  }
+</style>
+
+<script>
+  /**
+   * Zustand: bei der Doppelseite die Zahl der umgeblätterten Blätter (0 bis Blattzahl),
+   * bei der Einzelseite der Index der sichtbaren Seite (0 bis Seitenzahl minus 1).
+   */
+  const buchElement = document.querySelector<HTMLElement>('[data-buch]');
+  if (buchElement) {
+    const buch: HTMLElement = buchElement;
+    const blaetter = Array.from(buch.querySelectorAll<HTMLElement>('[data-blatt]'));
+    const seiten = Array.from(buch.querySelectorAll<HTMLElement>('[data-seite]'));
+    const steuerung = buch.querySelector<HTMLElement>('[data-buch-steuerung]')!;
+    const zurueck = buch.querySelector<HTMLButtonElement>('[data-buch-zurueck]')!;
+    const weiter = buch.querySelector<HTMLButtonElement>('[data-buch-weiter]')!;
+    const stand = buch.querySelector<HTMLElement>('[data-buch-stand]')!;
+    const buehne = buch.querySelector<HTMLElement>('[data-buch-buehne]')!;
+    const sprungLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-karte-sprung]'));
+    const doppelMedia = matchMedia('(min-width: 1100px)');
+    const ruhig = matchMedia('(prefers-reduced-motion: reduce)');
+
+    let doppel = doppelMedia.matches;
+    let blattStand = 0; // Doppelseite
+    let seitenStand = 0; // Einzelseite
+
+    const kapitelVon = (index: number) => seiten[index]?.id.replace('karte-', '') ?? '';
+    const titelVon = (index: number) => seiten[index]?.querySelector('h3')?.textContent?.trim() ?? (index === 0 ? 'Deckblatt' : 'Rückseite');
+
+    /** sichtbare Seitenindizes im aktuellen Zustand */
+    function sichtbar(): number[] {
+      if (!doppel) return [seitenStand];
+      const links = blattStand * 2 - 1;
+      const rechts = blattStand * 2;
+      return [links, rechts].filter((i) => i >= 0 && i < seiten.length);
+    }
+
+    function zeichnen() {
+      const offen = sichtbar();
+      seiten.forEach((seite, i) => {
+        const zeigen = offen.includes(i);
+        seite.toggleAttribute('inert', !zeigen);
+        seite.setAttribute('aria-hidden', String(!zeigen));
+        seite.classList.toggle('ist-sichtbar', zeigen);
+      });
+
+      if (doppel) {
+        blaetter.forEach((blatt, b) => {
+          const um = b < blattStand;
+          blatt.classList.toggle('ist-umgeblaettert', um);
+          // Umgeblätterte: das zuletzt umgeblätterte liegt oben. Offene: das vorderste oben.
+          blatt.style.zIndex = String(um ? b + 1 : blaetter.length - b + 1);
+        });
+        buch.dataset.zustand = blattStand === 0 ? 'zu' : blattStand === blaetter.length ? 'ende' : 'offen';
+        zurueck.disabled = blattStand === 0;
+        weiter.disabled = blattStand === blaetter.length;
+      } else {
+        buch.dataset.zustand = 'offen';
+        zurueck.disabled = seitenStand === 0;
+        weiter.disabled = seitenStand === seiten.length - 1;
+      }
+
+      const nummern = offen.map((i) => i + 1);
+      const titel = Array.from(new Set(offen.map(titelVon))).join(' und ');
+      stand.textContent = `${titel} · Seite ${nummern.join(' und ')} von ${seiten.length}`;
+
+      const aktivesKapitel = offen.map(kapitelVon);
+      sprungLinks.forEach((link) => {
+        const ziel = seiten[Number(link.dataset.karteSprung)]?.id.replace('karte-', '');
+        link.setAttribute('aria-current', String(aktivesKapitel.includes(ziel ?? '')));
+      });
+    }
+
+    function einzelWechsel(neu: number) {
+      if (neu === seitenStand || neu < 0 || neu >= seiten.length) return;
+      const alt = seitenStand;
+      seitenStand = neu;
+      if (!ruhig.matches) {
+        // vorwärts: die alte Seite schlägt nach links weg; rückwärts: die neue kommt zurück
+        const animiert = neu > alt ? seiten[alt] : seiten[neu];
+        const klasse = neu > alt ? 'schlaegt-um' : 'kommt-zurueck';
+        animiert.classList.add(klasse);
+        animiert.addEventListener('animationend', () => animiert.classList.remove(klasse), { once: true });
+      }
+      zeichnen();
+    }
+
+    function blaettern(richtung: 1 | -1) {
+      if (doppel) {
+        blattStand = Math.min(Math.max(blattStand + richtung, 0), blaetter.length);
+        zeichnen();
+      } else {
+        einzelWechsel(seitenStand + richtung);
+      }
+    }
+
+    function zeigeSeite(index: number) {
+      if (doppel) {
+        blattStand = Math.ceil(index / 2);
+        zeichnen();
+      } else {
+        einzelWechsel(index);
+        zeichnen();
+      }
+    }
+
+    function modus() {
+      // Beim Wechsel der Breite bleibt die zuletzt gelesene Seite stehen
+      const aktuell = sichtbar().at(-1) ?? 0;
+      doppel = doppelMedia.matches;
+      buch.classList.toggle('buch--doppel', doppel);
+      buch.classList.toggle('buch--einzel', !doppel);
+      if (doppel) blattStand = Math.ceil(aktuell / 2);
+      else seitenStand = aktuell;
+      zeichnen();
+    }
+
+    buch.classList.add('buch--aktiv');
+    steuerung.hidden = false;
+    modus();
+    doppelMedia.addEventListener('change', modus);
+
+    zurueck.addEventListener('click', () => blaettern(-1));
+    weiter.addEventListener('click', () => blaettern(1));
+
+    // Klick auf die rechte Seite blättert vor, auf die linke zurück (nicht auf Links)
+    buehne.addEventListener('click', (e) => {
+      const ziel = e.target as HTMLElement;
+      if (ziel.closest('a, button')) return;
+      const seite = ziel.closest<HTMLElement>('[data-seite]');
+      if (!seite) return;
+      const i = Number(seite.dataset.seite);
+      if (doppel) blaettern(i % 2 === 0 ? 1 : -1);
+      else blaettern(1);
+    });
+
+    // Pfeiltasten, solange der Fokus im Buch oder auf der Kapitelleiste liegt
+    buch.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); blaettern(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); blaettern(-1); }
+    });
+
+    // Wischen auf dem Handy
+    let startX = 0;
+    let startY = 0;
+    buehne.addEventListener('pointerdown', (e) => { startX = e.clientX; startY = e.clientY; }, { passive: true });
+    buehne.addEventListener('pointerup', (e) => {
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) blaettern(dx < 0 ? 1 : -1);
+    }, { passive: true });
+
+    // Kapitelleiste und Sprünge aus den Speisen-Karten
+    sprungLinks.forEach((link) =>
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        zeigeSeite(Number(link.dataset.karteSprung));
+        buch.scrollIntoView({ behavior: ruhig.matches ? 'auto' : 'smooth', block: 'start' });
+      })
+    );
+    document.querySelectorAll<HTMLAnchorElement>('[data-karte-seite]').forEach((link) =>
+      link.addEventListener('click', () => {
+        const ziel = seiten.findIndex((s) => s.id === `karte-${link.dataset.karteSeite}`);
+        if (ziel >= 0) zeigeSeite(ziel);
+      })
+    );
+  }
+</script>

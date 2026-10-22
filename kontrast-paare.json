@@ -1,0 +1,12 @@
+{
+  "$kommentar": "Paare außerhalb der Rollenprüfung, für node ../Design-Skill/scripts/pruefe-kontrast.mjs --paare kontrast-paare.json. Der Fokusring in dunklen Sektionen ist --rot-300, nicht --farbe-marke (tokens.css, .sektion--dunkel).",
+  "paare": [
+    { "name": "Fokusring und Links in dunklen Sektionen (rot-300 auf Holzkohle)", "vorn": "#e08a7f", "hinten": "#1c1a19", "min": 4.5 },
+    { "name": "Leiser Text auf Holzkohle", "vorn": "#c9c1bb", "hinten": "#1c1a19", "min": 4.5 },
+    { "name": "Beschreibung der Gerichte auf Papier", "vorn": "#5f5753", "hinten": "#fffdf8", "min": 4.5 },
+    { "name": "Preise auf Papier", "vorn": "#660000", "hinten": "#fffdf8", "min": 4.5 },
+    { "name": "Text auf dem roten Deckblatt", "vorn": "#fcfbf9", "hinten": "#660000", "min": 4.5 },
+    { "name": "Text im Held auf abgedunkelter Fassade (Holzkohle 88 %, schlechtester Fall)", "vorn": "#fcfbf9", "hinten": "#3a3532", "min": 4.5 },
+    { "name": "Knopfrand rot-300 auf Holzkohle (WCAG 1.4.11)", "vorn": "#e08a7f", "hinten": "#1c1a19", "min": 3.0 }
+  ]
+}

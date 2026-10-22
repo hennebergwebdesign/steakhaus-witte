@@ -1,0 +1,138 @@
+---
+/**
+ * Google-Bewertungen. Ohne Daten (Schlüssel fehlt, Google gestört) zeigt die Sektion die Links
+ * zum Profil, nie eine feste Zahl und nie eine erfundene Stimme. Mit Daten: Schnitt, Anzahl,
+ * Stand und bis zu fünf Rezensionen (mehr liefert die Places API nicht), als Karten mit Hover.
+ * Rezensionstexte werden per textContent eingesetzt, nie als HTML.
+ */
+import Icon from '../Icon.astro';
+import { betrieb } from '../../data/betrieb';
+
+const placeId = import.meta.env.PUBLIC_GOOGLE_PLACE_ID as string | undefined;
+const schreiben = placeId ? `https://search.google.com/local/writereview?placeid=${encodeURIComponent(placeId)}` : betrieb.googleProfil;
+---
+<section class="sektion sektion--alt bewertungen" id="bewertungen" aria-labelledby="bewertungen-titel">
+  <div class="inhalt--weit">
+    <div class="bewertungen__kopf">
+      <div>
+        <h2 id="bewertungen-titel">Bewertungen auf Google</h2>
+        <p class="bewertungen__schnitt" data-bewertung-schnitt hidden></p>
+      </div>
+      <div class="bewertungen__links">
+        <a class="btn btn--zweit" href={betrieb.googleProfil} rel="noopener" target="_blank" data-bewertung-profil>
+          <Icon name="google" />Alle Bewertungen<span class="sr-only"> auf Google (neues Fenster)</span>
+        </a>
+        <a class="btn btn--zweit" href={schreiben} rel="noopener" target="_blank">
+          <Icon name="stern" />Bewertung schreiben<span class="sr-only"> (neues Fenster)</span>
+        </a>
+      </div>
+    </div>
+
+    <ul class="bewertungen__liste" data-bewertung-liste aria-live="polite"></ul>
+    <p class="bewertungen__hinweis text-leise" data-bewertung-hinweis>
+      Die aktuellen Bewertungen von Gästen finden Sie im Google-Profil von Haus Witte.
+    </p>
+  </div>
+
+  <template data-bewertung-vorlage>
+    <li class="rezension">
+      <p class="rezension__sterne" aria-hidden="true"></p>
+      <p class="sr-only" data-sr-sterne></p>
+      <blockquote class="rezension__text"></blockquote>
+      <p class="rezension__autor"></p>
+    </li>
+  </template>
+</section>
+
+<style>
+  .bewertungen__kopf {
+    display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between;
+    gap: var(--raum-6); margin-block-end: var(--raum-block);
+  }
+  .bewertungen__kopf h2 { margin: 0; }
+  .bewertungen__schnitt { margin: var(--raum-3) 0 0; font-size: var(--text-lg); }
+  .bewertungen__schnitt :global(strong) { font-family: var(--schrift-display); font-size: var(--text-h2); color: var(--farbe-marke-text); }
+  .bewertungen__links { display: flex; flex-wrap: wrap; gap: var(--raum-3); }
+
+  .bewertungen__liste {
+    list-style: none; margin: 0; padding: 0 0 var(--raum-4);
+    display: grid; grid-auto-flow: column; grid-auto-columns: min(22rem, 85%);
+    gap: var(--raum-4);
+    overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain;
+  }
+  .bewertungen__liste:empty { display: none; }
+  .rezension {
+    scroll-snap-align: start;
+    display: flex; flex-direction: column; gap: var(--raum-3);
+    background: var(--farbe-flaeche);
+    border: 1px solid var(--farbe-rahmen);
+    border-radius: var(--radius-m);
+    padding: var(--raum-6);
+    transition: border-color var(--dauer-schnell) var(--kurve), transform var(--dauer-schnell) var(--kurve), box-shadow var(--dauer-schnell) var(--kurve);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .rezension:hover { border-color: var(--farbe-marke); transform: translateY(-4px); box-shadow: var(--schatten-weich); }
+  }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: reduce) { .rezension:hover { transform: none; } }
+  .rezension__sterne { margin: 0; color: var(--farbe-akzent); letter-spacing: 0.08em; }
+  .rezension__text { margin: 0; flex: 1; display: -webkit-box; -webkit-line-clamp: 7; -webkit-box-orient: vertical; overflow: hidden; }
+  .rezension__text.ist-offen { -webkit-line-clamp: unset; display: block; }
+  .rezension__mehr {
+    align-self: start; background: none; border: 0; padding: var(--raum-2) 0; min-height: var(--ziel-min);
+    color: var(--farbe-marke-text); font-weight: 600; text-decoration: underline; cursor: pointer;
+  }
+  .rezension__autor { margin: 0; font-weight: 600; font-size: var(--text-sm); }
+  .rezension__autor span { font-weight: 400; color: var(--farbe-text-leise); }
+  .bewertungen__hinweis { margin-block-start: var(--raum-4); }
+</style>
+
+<script>
+  import { laden, zahl, datum } from '../../scripts/bewertungen';
+  const liste = document.querySelector<HTMLUListElement>('[data-bewertung-liste]');
+  const vorlage = document.querySelector<HTMLTemplateElement>('[data-bewertung-vorlage]');
+  const schnitt = document.querySelector<HTMLElement>('[data-bewertung-schnitt]');
+  const hinweis = document.querySelector<HTMLElement>('[data-bewertung-hinweis]');
+  const profil = document.querySelector<HTMLAnchorElement>('[data-bewertung-profil]');
+
+  laden().then((d) => {
+    if (!d || !liste || !vorlage || !schnitt || !hinweis) return;
+    schnitt.hidden = false;
+    const stark = document.createElement('strong');
+    stark.textContent = zahl(d.schnitt);
+    schnitt.append(stark, ` von 5 Sternen bei ${zahl(d.anzahl, 0)} Bewertungen`);
+    hinweis.textContent = `Stand ${datum(d.stand)}. Gezeigt werden die Rezensionen, die Google über die Schnittstelle liefert (höchstens fünf).`;
+    if (profil && d.profil) profil.href = d.profil;
+
+    for (const b of d.bewertungen) {
+      if (!b.text) continue;
+      const li = vorlage.content.firstElementChild!.cloneNode(true) as HTMLLIElement;
+      const sterne = Math.round(b.sterne);
+      li.querySelector('.rezension__sterne')!.textContent = '★'.repeat(sterne) + '☆'.repeat(5 - sterne);
+      li.querySelector('[data-sr-sterne]')!.textContent = `${sterne} von 5 Sternen`;
+      li.querySelector('.rezension__text')!.textContent = `„${b.text}“`;
+      const autor = li.querySelector('.rezension__autor')!;
+      autor.textContent = b.autor;
+      if (b.relativ) {
+        const zeit = document.createElement('span');
+        zeit.textContent = `, ${b.relativ}`;
+        autor.append(zeit);
+      }
+      liste.append(li);
+      // lange Texte: gekürzt mit Aufklappen statt hart abgeschnitten
+      const text = li.querySelector<HTMLElement>('.rezension__text')!;
+      if (text.scrollHeight > text.clientHeight + 2) {
+        const mehr = document.createElement('button');
+        mehr.type = 'button';
+        mehr.className = 'rezension__mehr';
+        mehr.textContent = 'Weiterlesen';
+        mehr.setAttribute('aria-expanded', 'false');
+        mehr.addEventListener('click', () => {
+          const offen = text.classList.toggle('ist-offen');
+          mehr.textContent = offen ? 'Weniger' : 'Weiterlesen';
+          mehr.setAttribute('aria-expanded', String(offen));
+        });
+        text.after(mehr);
+      }
+    }
+  });
+</script>

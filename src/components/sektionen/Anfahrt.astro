@@ -1,0 +1,93 @@
+---
+/**
+ * Anfahrt und Social Media. Keine eingebettete Karte und kein eingebetteter Feed (Wunsch des
+ * Auftraggebers und Datenschutz): nur Links. Dadurch lädt die Seite nichts von Google,
+ * Facebook oder Instagram, bevor jemand klickt, und braucht kein Consent Banner.
+ */
+import { Image } from 'astro:assets';
+import fassade from '../../assets/bilder/fassade-tag.jpg';
+import Icon from '../Icon.astro';
+import { betrieb, social } from '../../data/betrieb';
+---
+<section class="sektion sektion--alt anfahrt" id="anfahrt" aria-labelledby="anfahrt-titel">
+  <div class="inhalt--weit anfahrt__raster">
+    <div class="anfahrt__ort">
+      <h2 id="anfahrt-titel">Anfahrt</h2>
+      <div class="anfahrt__karte">
+        <div class="anfahrt__bild">
+          <Image src={fassade} alt="Haus Witte bei Tag: hellgraue Altbaufassade mit Rundbogenfenstern und Schriftzug Steakhouse Restaurant" widths={[320, 499]} sizes="(min-width: 640px) 320px, 92vw" loading="lazy" />
+        </div>
+        <address class="anfahrt__adresse">
+          <strong>{betrieb.name}</strong>
+          <span>{betrieb.strasse}</span>
+          <span>{betrieb.plz} {betrieb.ort}</span>
+          <a href={betrieb.telefonLink}>{betrieb.telefon}</a>
+        </address>
+      </div>
+      <a class="btn btn--zweit" href={betrieb.routenplaner} rel="noopener" target="_blank">
+        <Icon name="route" />Route planen<span class="sr-only"> mit Google Maps (neues Fenster)</span>
+      </a>
+    </div>
+
+    <div class="anfahrt__social">
+      <h2 class="anfahrt__social-titel">Haus Witte online</h2>
+      <ul class="social">
+        {social.map((s) => (
+          <li class:list={['social__karte', `social__karte--${s.id}`, { 'social__karte--fehlt': !s.url }]}>
+            <span class="social__icon"><Icon name={s.id} /></span>
+            <span class="social__text">
+              <strong>{s.name}</strong>
+              <span>{s.text}</span>
+            </span>
+            {s.url ? (
+              <a class="social__link" href={s.url} rel="noopener" target="_blank">
+                <span class="sr-only">{s.name} öffnen (neues Fenster)</span>
+                <Icon name="pfeil-rechts" />
+              </a>
+            ) : (
+              <span class="social__fehlt">[[FEHLT: Adresse des Profils]]</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .anfahrt__raster { display: grid; gap: var(--raum-block) var(--raum-spalte); }
+  .anfahrt__raster > * { min-width: 0; }
+  @media (min-width: 1100px) { .anfahrt__raster { grid-template-columns: 1fr 1fr; } }
+
+  .anfahrt__karte { display: flex; flex-wrap: wrap; gap: var(--raum-6); align-items: center; margin-block-end: var(--raum-6); }
+  .anfahrt__bild { width: 320px; max-width: 100%; border-radius: var(--radius-m); overflow: hidden; box-shadow: var(--schatten-weich); }
+  .anfahrt__adresse { font-style: normal; display: grid; gap: var(--raum-1); font-size: var(--text-lg); }
+  .anfahrt__adresse a { font-weight: 600; display: inline-flex; align-items: center; min-height: var(--ziel-min); }
+
+  .anfahrt__social-titel { font-size: var(--text-h2); }
+  .social { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--raum-3); }
+  .social__karte {
+    position: relative;
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--raum-4);
+    padding: var(--raum-4) var(--raum-6);
+    background: var(--farbe-flaeche);
+    border: 1px solid var(--farbe-rahmen);
+    border-radius: var(--radius-m);
+    transition: border-color var(--dauer-schnell) var(--kurve), transform var(--dauer-schnell) var(--kurve), box-shadow var(--dauer-schnell) var(--kurve);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .social__karte:not(.social__karte--fehlt):hover { border-color: var(--farbe-marke); transform: translateY(-3px); box-shadow: var(--schatten-weich); }
+  }
+  .social__karte:focus-within { outline: 3px solid var(--farbe-fokus); outline-offset: 3px; }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: reduce) { .social__karte:hover { transform: none !important; } }
+  .social__icon {
+    width: 3rem; height: 3rem; display: inline-flex; align-items: center; justify-content: center;
+    border-radius: var(--radius-rund); background: var(--farbe-marke); color: var(--farbe-text-invers);
+  }
+  .social__text { display: grid; }
+  .social__text span { color: var(--farbe-text-leise); font-size: var(--text-sm); }
+  .social__link { display: inline-flex; width: var(--ziel-min); height: var(--ziel-min); align-items: center; justify-content: center; color: var(--farbe-marke-text); }
+  .social__link::after { content: ''; position: absolute; inset: 0; }
+  .social__link:focus-visible { outline: none; }
+  .social__fehlt { font-size: var(--text-xs); color: var(--farbe-fehler); font-weight: 600; text-align: end; }
+</style>

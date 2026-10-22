@@ -1,0 +1,18 @@
+// Cloudflare Konfiguration. Keine Geheimnisse hier, die liegen als Secret im Dashboard.
+// Hinweis: @astrojs/cloudflare 14 baut fuer Cloudflare Workers mit statischen Assets,
+// nicht mehr fuer Pages. Siehe CLAUDE.md, Abschnitt Deployment.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "steakhaus-witte",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": { "directory": "./dist", "binding": "ASSETS" },
+  "observability": { "enabled": true },
+  // Ohne id: Wrangler legt die Namespaces beim ersten Deploy selbst an (automatische Bereitstellung).
+  // Keine erfundenen IDs eintragen, ein falscher Wert bricht den Deploy ab.
+  "kv_namespaces": [
+    { "binding": "REVIEWS_CACHE" },
+    { "binding": "RATE_LIMIT" }
+  ]
+}
