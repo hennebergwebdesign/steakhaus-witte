@@ -1,0 +1,119 @@
+---
+/**
+ * Fuss: alle Kontaktdaten wortgleich mit JSON-LD und Impressum, Oeffnungszeiten, Pflichtlinks.
+ * Kein Link "Cookie Einstellungen": die Seite nutzt nur notwendige Technik und zeigt deshalb
+ * kein Banner (consent-und-dienste.md). Kommt ein einwilligungspflichtiger Dienst dazu,
+ * kommen Banner und Link mit.
+ */
+import Icon from './Icon.astro';
+import { betrieb, oeffnungszeiten, social } from '../data/betrieb';
+
+const jahr = new Date().getFullYear();
+---
+<footer class="fuss">
+  <div class="fuss__glut" aria-hidden="true"></div>
+  <div class="fuss__innen inhalt--weit">
+    <div class="fuss__marke">
+      <p class="fuss__name">{betrieb.name}</p>
+      <p class="fuss__zeile">Steaks vom Holzkohlengrill in Gelsenkirchen-Ückendorf, seit {betrieb.seit}.</p>
+    </div>
+
+    <div class="fuss__spalte">
+      <h2 class="fuss__titel">Kontakt</h2>
+      <address>
+        <a href={betrieb.routenplaner} rel="noopener" target="_blank">
+          {betrieb.strasse}<br />{betrieb.plz} {betrieb.ort}
+          <span class="sr-only">(Route in Google Maps, neues Fenster)</span>
+        </a>
+        <a href={betrieb.telefonLink}>{betrieb.telefon}</a>
+      </address>
+    </div>
+
+    <div class="fuss__spalte">
+      <h2 class="fuss__titel">Öffnungszeiten</h2>
+      <dl class="fuss__zeiten" data-copy-vorschlag={oeffnungszeiten.bestaetigt ? undefined : ''}>
+        {oeffnungszeiten.zeilen.map((z) => (
+          <div><dt>{z.tage}</dt><dd>{z.zeiten}</dd></div>
+        ))}
+      </dl>
+    </div>
+
+    <div class="fuss__spalte">
+      <h2 class="fuss__titel">Folgen</h2>
+      <ul class="fuss__social">
+        {social.map((s) =>
+          s.url ? (
+            <li><a href={s.url} rel="noopener" target="_blank"><Icon name={s.id} />{s.name}<span class="sr-only"> (neues Fenster)</span></a></li>
+          ) : (
+            <li class="fuss__fehlt"><Icon name={s.id} />{s.name}: [[FEHLT: Adresse]]</li>
+          )
+        )}
+      </ul>
+    </div>
+  </div>
+
+  <div class="fuss__unten inhalt--weit">
+    <p>© {jahr} {betrieb.name}</p>
+    <ul>
+      <li><a href="/impressum">Impressum</a></li>
+      <li><a href="/datenschutz">Datenschutz</a></li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .fuss {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--farbe-flaeche-dunkel);
+    color: var(--farbe-text-invers);
+    padding-block: var(--raum-sektion) var(--raum-8);
+  }
+  .fuss__glut {
+    position: absolute; inset: auto 0 0 0; height: 70%; z-index: -1;
+    background: var(--verlauf-glut);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .fuss a { color: var(--farbe-text-invers); text-decoration-color: var(--farbe-marke-auf-dunkel); }
+  .fuss a:hover { color: var(--farbe-marke-auf-dunkel); }
+
+  .fuss__innen {
+    display: grid;
+    gap: var(--raum-block) var(--raum-spalte);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) { .fuss__innen { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1100px) { .fuss__innen { grid-template-columns: 1.4fr 1fr 1.3fr 1fr; } }
+
+  .fuss__name { font-family: var(--schrift-display); font-size: var(--text-h3); font-weight: 700; line-height: var(--zeilenhoehe-eng); margin-block-end: var(--raum-3); }
+  .fuss__zeile { color: var(--farbe-text-invers-leise); }
+  .fuss__titel {
+    font-family: var(--schrift-text); font-size: var(--text-sm); font-weight: 600;
+    letter-spacing: var(--sperrung-label); text-transform: uppercase;
+    color: var(--farbe-marke-auf-dunkel); margin-block-end: var(--raum-3);
+  }
+  address { font-style: normal; display: grid; gap: var(--raum-3); }
+  .fuss__zeiten { margin: 0; display: grid; gap: var(--raum-2); }
+  .fuss__zeiten dt { font-weight: 600; }
+  .fuss__zeiten dd { margin: 0; color: var(--farbe-text-invers-leise); }
+  .fuss__social { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--raum-2); }
+  .fuss__social a, .fuss__fehlt { display: inline-flex; align-items: center; gap: var(--raum-2); min-height: 2.75rem; }
+  .fuss__fehlt { color: var(--farbe-text-invers-leise); font-size: var(--text-sm); }
+
+  .fuss__unten {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--raum-4);
+    margin-block-start: var(--raum-block); padding-block-start: var(--raum-6);
+    border-block-start: 1px solid var(--farbe-rahmen-dunkel);
+    font-size: var(--text-sm); color: var(--farbe-text-invers-leise);
+  }
+  .fuss__unten p { margin: 0; }
+  .fuss__unten ul { list-style: none; margin: 0; padding: 0; display: flex; gap: var(--raum-6); }
+  .fuss__unten a { display: inline-block; padding-block: var(--raum-2); }
+
+  /* Platz fuer den Mobilbalken */
+  @media (max-width: 860px) {
+    .fuss { padding-block-end: calc(var(--raum-8) + var(--hoehe-mobilbalken)); }
+  }
+</style>

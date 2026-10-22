@@ -1,0 +1,174 @@
+/*
+  Designtokens Haus Witte. Abgeleitet aus docs/marke.json, dort steht jede Begruendung.
+
+  REGEL: Kein Farb- oder Groessenwert im Komponentencode ohne Token. Komponenten greifen
+  nur auf die ROLLEN zu, nie auf die Rampe.
+*/
+
+:root {
+  /* ---------------------------------------------------------------------
+     FARBRAMPE
+     Ochsenblut aus der Bestandsseite (#660000), Logorot geschaerft, Holzkohle,
+     Naturstein aus den Boegen im Gastraum, Papier fuer die Speisekarte.
+     --------------------------------------------------------------------- */
+  --rot-50:  #f8ecea;
+  --rot-200: #efb5ad;
+  --rot-300: #e08a7f;   /* Text und Fokus auf Holzkohle: 6,7:1 */
+  --rot-500: #a61f1a;   /* Akzent. Auf Flaeche 7,17:1, weisser Text darauf 7,41:1 */
+  --rot-600: #8c1612;
+  --rot-800: #660000;   /* Hausfarbe der Bestandsseite, 12,98:1 auf Flaeche */
+  --kohle-900: #1c1a19;
+  --kohle-800: #262321;
+  --stein-200: #ebe7e1;
+  --papier:    #fffdf8;
+  --glut:      #e2742f; /* nur im Glutverlauf, nie als Text */
+
+  /* ---------------------------------------------------------------------
+     ROLLEN
+     --------------------------------------------------------------------- */
+  --farbe-marke:        var(--rot-800);
+  --farbe-marke-text:   var(--rot-800);
+  --farbe-marke-hell:   var(--rot-50);
+
+  --farbe-akzent:       var(--rot-500);
+  --farbe-akzent-auf:   #ffffff;
+  --farbe-akzent-hover: var(--rot-600);   /* wird dunkler: auf hellem Grund die ruhigere Rueckmeldung */
+
+  --farbe-flaeche:        #fcfbf9;
+  --farbe-flaeche-alt:    var(--stein-200);
+  --farbe-flaeche-dunkel: var(--kohle-900);
+  --farbe-flaeche-dunkel-2: var(--kohle-800);
+  --farbe-flaeche-karte:  var(--papier);
+
+  --farbe-text:               #211d1c;   /* 16,15:1 auf Flaeche */
+  --farbe-text-leise:         #5f5753;   /* 6,83:1 auf Flaeche, 5,73:1 auf Stein */
+  --farbe-text-invers:        #fcfbf9;
+  --farbe-text-invers-leise:  #c9c1bb;   /* 9,77:1 auf Holzkohle */
+  --farbe-marke-auf-dunkel:   var(--rot-300);
+
+  --farbe-rahmen:       #d9d3cb;
+  --farbe-rahmen-dunkel: #4a4441;
+
+  --farbe-erfolg:  #2f6b3a;
+  --farbe-fehler:  var(--rot-500);
+
+  --farbe-fokus: #211d1c;
+
+  /*
+    GLUTVERLAUF: die eigene visuelle Eigenschaft dieses Projekts (harte Grenze Handschrift).
+    Abgeleitet vom Holzkohlengrill: Glut von unten, Ochsenblut im Uebergang, Holzkohle oben.
+    Liegt nur auf dunklen Flaechen und nie hinter Fliesstext mit weniger als 4,5:1.
+  */
+  --verlauf-glut:
+    radial-gradient(120% 70% at 50% 115%, color-mix(in oklab, var(--glut) 55%, transparent) 0%, color-mix(in oklab, var(--rot-800) 60%, transparent) 38%, transparent 72%);
+
+  /* ---------------------------------------------------------------------
+     TYPOGRAFIE
+     Zilla Slab: Holzlettern des Logos. Source Sans 3: hohe x-Hoehe, ruhig lesbar.
+     --------------------------------------------------------------------- */
+  --schrift-text:    'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --schrift-display: 'Zilla Slab', Rockwell, Georgia, serif;
+
+  --zeilenhoehe-eng:    1.08;
+  --zeilenhoehe-mittel: 1.3;
+  --zeilenhoehe-normal: 1.6;
+
+  /* Zwei Stufen: bis 1200 px gedeckelt, darueber die grosse Stufe (siehe unten). */
+  --text-xs:   clamp(0.875rem, 0.86rem + 0.06vw, 0.9375rem);
+  --text-sm:   clamp(0.9375rem, 0.92rem + 0.1vw, 1rem);
+  --text-base: clamp(1.0625rem, 1.03rem + 0.15vw, 1.125rem);
+  --text-lg:   clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);
+  --text-h4:   clamp(1.1875rem, 1.08rem + 0.5vw, 1.45rem);
+  --text-h3:   clamp(1.4rem, 1.17rem + 1.1vw, 1.95rem);
+  --text-h2:   clamp(1.85rem, 1.36rem + 2.4vw, 2.7rem);
+  --text-h1:   clamp(2.35rem, 1.45rem + 4.4vw, 3.6rem);
+  --text-preis: var(--text-lg);
+
+  --sperrung-display: -0.01em;
+  --sperrung-label:   0.06em;
+
+  /* ---------------------------------------------------------------------
+     RAUM
+     --------------------------------------------------------------------- */
+  --raum-1: 0.25rem;  --raum-2: 0.5rem;   --raum-3: 0.75rem;
+  --raum-4: 1rem;     --raum-6: 1.5rem;   --raum-8: 2rem;
+  --raum-12: 3rem;    --raum-16: 4rem;    --raum-24: 6rem;
+  --raum-32: 8rem;
+
+  --raum-sektion:     clamp(3.5rem, 1.8rem + 6.4vw, 7rem);
+  --raum-sektion-eng: clamp(2.5rem, 1.4rem + 4vw, 4.5rem);
+  --raum-block:       clamp(2rem, 1.2rem + 3.2vw, 4rem);
+  --raum-spalte:      clamp(1.25rem, 0.8rem + 2.2vw, 2.75rem);
+
+  /* ---------------------------------------------------------------------
+     LAYOUT
+       480 kleines Handy · 640 grosses Handy · 861 Menue · 1100 Laptop · 1200 Desktop
+     --------------------------------------------------------------------- */
+  --breite-inhalt: 1200px;
+  --breite-weit:   1360px;
+  --breite-text:   64ch;
+  --rand-seite:    clamp(1.125rem, 0.6rem + 2.4vw, 3rem);
+  --hoehe-kopf:    clamp(4rem, 3.4rem + 2vw, 5rem);
+  --hoehe-topleiste: 2.25rem;
+  --hoehe-kopf-gruppe: calc(var(--hoehe-topleiste) + var(--hoehe-kopf));
+  --hoehe-mobilbalken: 4rem;
+
+  /* ---------------------------------------------------------------------
+     FORM: Knoepfe und Felder s, Karten und Bilder m, Speisekarte kantig
+     --------------------------------------------------------------------- */
+  --radius-s: 4px;
+  --radius-m: 6px;
+  --radius-0: 0;
+  --radius-rund: 999px;   /* nur fuer runde Icon-Knoepfe */
+
+  --schatten-weich: 0 1px 2px rgb(28 26 25 / 0.08), 0 8px 24px rgb(28 26 25 / 0.1);
+  --schatten-hoch:  0 14px 40px rgb(28 26 25 / 0.22);
+  --schatten-buch:  0 30px 60px rgb(0 0 0 / 0.45), 0 8px 18px rgb(0 0 0 / 0.35);
+
+  --z-kopf: 100;
+  --z-mobilbalken: 90;
+  --z-menue: 200;
+
+  /* ---------------------------------------------------------------------
+     BEWEGUNG: Profil weich, ohne Nachfedern
+     --------------------------------------------------------------------- */
+  --dauer-sofort:  0.12s;
+  --dauer-schnell: 0.2s;
+  --dauer-normal:  0.4s;
+  --dauer-lang:    0.6s;
+  --dauer-sequenz: 0.9s;
+  --dauer-aus-normal: 0.26s;
+  --dauer-aus-lang:   0.4s;
+
+  --kurve-eintritt: cubic-bezier(0.22, 1, 0.36, 1);
+  --kurve-austritt: cubic-bezier(0.4, 0, 1, 1);
+  --kurve-wechsel:  cubic-bezier(0.4, 0, 0.2, 1);
+  --kurve: var(--kurve-eintritt);
+
+  --weg-klein:  8px;
+  --weg-normal: 16px;
+  --weg-gross:  24px;
+
+  /* ---------------------------------------------------------------------
+     ICONS: Linie 2 px passend zu Zilla Slab 700
+     --------------------------------------------------------------------- */
+  --icon-strich:        2px;
+  --icon-groesse:       1.5rem;
+  --icon-groesse-klein: 1.25rem;
+  --icon-groesse-gross: 2rem;
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --text-h4:   clamp(1.45rem, 1.15rem + 0.5vw, 1.65rem);
+    --text-h3:   clamp(1.95rem, 1.45rem + 0.8vw, 2.2rem);
+    --text-h2:   clamp(2.7rem, 1.8rem + 1.5vw, 3.25rem);
+    --text-h1:   clamp(3.6rem, 1rem + 4.2vw, 4.75rem);
+  }
+}
+
+/* Dunkle Flaechen schalten Fokus und Links auf die helle Markenstufe um. */
+.sektion--dunkel,
+.fuss {
+  --farbe-fokus: var(--farbe-marke-auf-dunkel);
+}
