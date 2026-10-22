@@ -82,6 +82,10 @@ function json(koerper: unknown, quelle: string) {
   });
 }
 
+/**
+ * Ohne Daten antwortet die Route mit 204 statt 503: die Seite zeigt dann still die Links zum
+ * Profil, und der Browser schreibt keinen Fehler in die Konsole. Der Grund steht im Kopf.
+ */
 function fehlerAntwort(grund: string) {
-  return new Response(JSON.stringify({ fehler: grund }), { status: 503, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
+  return new Response(null, { status: 204, headers: { 'x-bewertungen': grund, 'cache-control': 'no-store' } });
 }

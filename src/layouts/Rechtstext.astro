@@ -19,11 +19,11 @@ const { titel, beschreibung } = Astro.props;
 </Basis>
 
 <style>
-  .rechtstext .inhalt { max-width: 48rem; }
+  .rechtstext .inhalt { max-width: var(--breite-buch-einzel); }
   .rechtstext__hinweis {
     padding: var(--raum-3) var(--raum-4);
     background: var(--farbe-marke-hell);
-    border-inline-start: 4px solid var(--farbe-marke);
+    border-inline-start: var(--rand-akzent) solid var(--farbe-marke);
     font-size: var(--text-sm);
   }
   .rechtstext :global(h1) { font-size: var(--text-h2); }

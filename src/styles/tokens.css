@@ -1,5 +1,5 @@
 /*
-  Designtokens Haus Witte. Abgeleitet aus docs/marke.json, dort steht jede Begruendung.
+  Designtokens Haus Witte. Abgeleitet aus marke.json, dort steht jede Begruendung.
 
   REGEL: Kein Farb- oder Groessenwert im Komponentencode ohne Token. Komponenten greifen
   nur auf die ROLLEN zu, nie auf die Rampe.
@@ -115,6 +115,13 @@
   --hoehe-topleiste: 2.25rem;
   --hoehe-kopf-gruppe: calc(var(--hoehe-topleiste) + var(--hoehe-kopf));
   --hoehe-mobilbalken: 4rem;
+  --ziel-min: 2.75rem;        /* 44 px Mindestgröße für Tipp- und Klickziele (WCAG 2.5.5) */
+  --breite-schmal: 34rem;     /* Erklärtexte und Hinweise */
+  --breite-buch: 72rem;       /* Doppelseite der Speisekarte */
+  --breite-buch-einzel: 36rem;/* Einzelseite der Speisekarte */
+  --breite-wortmarke: 18rem;
+  --rand-akzent: 4px;         /* farbige Kante links an Hinweisen */
+  --rand-stark: 6px;          /* obere Kante der Formularkarte */
 
   /* ---------------------------------------------------------------------
      FORM: Knoepfe und Felder s, Karten und Bilder m, Speisekarte kantig
@@ -127,6 +134,9 @@
   --schatten-weich: 0 1px 2px rgb(28 26 25 / 0.08), 0 8px 24px rgb(28 26 25 / 0.1);
   --schatten-hoch:  0 14px 40px rgb(28 26 25 / 0.22);
   --schatten-buch:  0 30px 60px rgb(0 0 0 / 0.45), 0 8px 18px rgb(0 0 0 / 0.35);
+  --schatten-text:  0 2px 24px rgb(0 0 0 / 0.5);
+  --schatten-bund:  rgb(0 0 0 / 0.16);         /* Falz der Speisekarte */
+  --farbe-schleier: rgb(28 26 25 / 0.6);        /* Hintergrund hinter dem Menü */
 
   --z-kopf: 100;
   --z-mobilbalken: 90;

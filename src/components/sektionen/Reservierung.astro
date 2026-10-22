@@ -92,8 +92,8 @@ const personen = Array.from({ length: MAX_PERSONEN_ONLINE }, (_, i) => i + 1);
         <div class="feld feld--check">
           <input id="r-datenschutz" name="datenschutz" type="checkbox" value="ja" required aria-describedby="r-datenschutz-fehler" />
           <label for="r-datenschutz">
-            Ich bin einverstanden, dass meine Angaben zur Bearbeitung der Reservierung verwendet werden.
-            Mehr in der <a href="/datenschutz">Datenschutzerklärung</a>.
+            <span>Ich bin einverstanden, dass meine Angaben zur Bearbeitung der Reservierung verwendet werden.
+            Mehr in der <a href="/datenschutz">Datenschutzerklärung</a>.</span>
           </label>
           <p class="feld__fehler" id="r-datenschutz-fehler" data-fehler-fuer="datenschutz"></p>
         </div>
@@ -118,26 +118,26 @@ const personen = Array.from({ length: MAX_PERSONEN_ONLINE }, (_, i) => i + 1);
   .reservierung__raster { display: grid; gap: var(--raum-block) var(--raum-spalte); }
   @media (min-width: 1100px) { .reservierung__raster { grid-template-columns: 5fr 7fr; align-items: start; } }
 
-  .reservierung__telefon { margin-block: var(--raum-8); padding: var(--raum-6); border-inline-start: 4px solid var(--farbe-marke); background: var(--farbe-marke-hell); }
+  .reservierung__telefon { margin-block: var(--raum-8); padding: var(--raum-6); border-inline-start: var(--rand-akzent) solid var(--farbe-marke); background: var(--farbe-marke-hell); }
   .reservierung__telefon p { margin: 0 0 var(--raum-2); }
   .reservierung__nummer {
-    display: inline-flex; align-items: center; gap: var(--raum-3);
+    display: inline-flex; align-items: center; gap: var(--raum-3); min-height: var(--ziel-min);
     font-family: var(--schrift-display); font-size: var(--text-h3); font-weight: 700;
     color: var(--farbe-marke-text); text-decoration: none;
   }
   .reservierung__nummer:hover { text-decoration: underline; }
   .reservierung__zeiten h3 { display: flex; align-items: center; gap: var(--raum-2); font-size: var(--text-h4); }
   .reservierung__zeiten dl { margin: 0; display: grid; gap: var(--raum-2); }
-  .reservierung__zeiten dl div { display: grid; grid-template-columns: minmax(9rem, auto) 1fr; gap: var(--raum-3); }
+  .reservierung__zeiten dl div { display: grid; grid-template-columns: minmax(9rem, auto) 1fr; /* bewusst: Spalte für den längsten Wochentag */ gap: var(--raum-3); }
   .reservierung__zeiten dt { font-weight: 600; }
   .reservierung__zeiten dd { margin: 0; color: var(--farbe-text-leise); }
 
   .reservierung__karte {
     background: var(--farbe-flaeche-karte);
     border: 1px solid var(--farbe-rahmen);
-    border-block-start: 6px solid var(--farbe-marke);
+    border-block-start: var(--rand-stark) solid var(--farbe-marke);
     border-radius: var(--radius-m);
-    padding: clamp(var(--raum-6), 3vw, var(--raum-12));
+    padding: var(--raum-spalte);
     box-shadow: var(--schatten-weich);
   }
 
@@ -149,7 +149,8 @@ const personen = Array.from({ length: MAX_PERSONEN_ONLINE }, (_, i) => i + 1);
     .feld--breit { grid-column: 1 / -1; }
   }
   .feld { display: grid; gap: var(--raum-1); align-content: start; }
-  .feld label { font-weight: 600; }
+  /* Labels sind Tippziele (sie setzen den Fokus ins Feld), deshalb mindestens 44 px hoch */
+  .feld label { font-weight: 600; min-height: var(--ziel-min); display: flex; align-items: flex-end; flex-wrap: wrap; column-gap: var(--raum-2); }
   .feld__wozu { font-weight: 400; color: var(--farbe-text-leise); }
   .feld input, .feld select, .feld textarea {
     width: 100%; min-height: 3rem;
@@ -167,13 +168,26 @@ const personen = Array.from({ length: MAX_PERSONEN_ONLINE }, (_, i) => i + 1);
   .feld__fehler:empty { display: none; }
 
   .feld--check { grid-template-columns: auto 1fr; column-gap: var(--raum-3); margin-block: var(--raum-6) var(--raum-4); align-items: start; }
-  .feld--check input { width: 1.5rem; height: 1.5rem; min-height: 0; margin-block-start: var(--raum-1); accent-color: var(--farbe-akzent); }
-  .feld--check label { font-weight: 400; }
+  /* Eigene Checkbox mit 44 px Tippfläche, Haken aus dem Icon-Set als Maske */
+  .feld--check input {
+    appearance: none; -webkit-appearance: none; margin: 0; padding: 0; cursor: pointer;
+    width: var(--ziel-min); height: var(--ziel-min); min-height: 0;
+    border: 2px solid var(--farbe-text-leise); border-radius: var(--radius-s);
+    background: var(--farbe-flaeche);
+    transition: background-color var(--dauer-sofort) var(--kurve), border-color var(--dauer-sofort) var(--kurve);
+  }
+  .feld--check input:hover { border-color: var(--farbe-text); }
+  .feld--check input:checked {
+    background: var(--farbe-akzent) no-repeat center / 70% url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+    border-color: var(--farbe-akzent);
+  }
+  .feld--check label { font-weight: 400; align-items: center; }
   .feld--check .feld__fehler { grid-column: 2; }
 
-  .hp { position: absolute; inset-inline-start: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .hp label, .hp input { display: block; min-width: var(--ziel-min); min-height: var(--ziel-min); }
+  .hp { position: absolute; inset-inline-start: -9999px; /* bewusst: Honigtopf außerhalb des Bildes */ width: 1px; height: 1px; overflow: hidden; }
 
-  .formular__turnstile { margin-block-end: var(--raum-4); min-height: 4.5rem; }
+  .formular__turnstile { margin-block-end: var(--raum-4); min-height: 4.5rem; /* bewusst: Höhe des Turnstile-Widgets, verhindert Springen */ }
   .formular__meldung { padding: var(--raum-4); border-radius: var(--radius-s); background: var(--farbe-marke-hell); color: var(--farbe-fehler); font-weight: 600; max-width: none; }
   .formular__senden { width: 100%; }
   @media (min-width: 640px) { .formular__senden { width: auto; } }
@@ -211,12 +225,19 @@ const personen = Array.from({ length: MAX_PERSONEN_ONLINE }, (_, i) => i + 1);
       });
     }
 
-    // Prüfung beim Verlassen eines Feldes, aber erst nachdem es berührt wurde
-    form.addEventListener('focusout', (e) => {
+    /*
+      Fehler erscheinen beim Absenden und verschwinden, sobald das Feld stimmt (beim Tippen).
+      Bewusst keine Prüfung beim Verlassen eines Feldes: eine Meldung, die dabei auftaucht oder
+      verschwindet, verschiebt das Formular unter dem Zeiger, und der nächste Klick (zum Beispiel
+      auf die Checkbox) geht ins Leere. Im Test so passiert.
+    */
+    const korrigiert = (e: Event) => {
       const feld = e.target as HTMLInputElement;
-      if (!feld.name || !feld.value) return;
-      zeigeFehler(pruefen(daten()), feld.name);
-    });
+      if (!feld.name || feld.getAttribute('aria-invalid') !== 'true') return;
+      if (!pruefen(daten())[feld.name as keyof ReturnType<typeof pruefen>]) zeigeFehler({}, feld.name);
+    };
+    form.addEventListener('input', korrigiert);
+    form.addEventListener('change', korrigiert);
 
     // Turnstile erst laden, wenn jemand das Formular benutzt: kein Fremdabruf beim Seitenaufruf
     const turnstile = form.querySelector<HTMLElement>('[data-turnstile]');

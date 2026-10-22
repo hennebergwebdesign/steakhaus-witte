@@ -56,12 +56,13 @@ import { betrieb, social } from '../../data/betrieb';
 
 <style>
   .anfahrt__raster { display: grid; gap: var(--raum-block) var(--raum-spalte); }
+  .anfahrt__raster > * { min-width: 0; }
   @media (min-width: 1100px) { .anfahrt__raster { grid-template-columns: 1fr 1fr; } }
 
   .anfahrt__karte { display: flex; flex-wrap: wrap; gap: var(--raum-6); align-items: center; margin-block-end: var(--raum-6); }
   .anfahrt__bild { width: 320px; max-width: 100%; border-radius: var(--radius-m); overflow: hidden; box-shadow: var(--schatten-weich); }
   .anfahrt__adresse { font-style: normal; display: grid; gap: var(--raum-1); font-size: var(--text-lg); }
-  .anfahrt__adresse a { font-weight: 600; }
+  .anfahrt__adresse a { font-weight: 600; display: inline-flex; align-items: center; min-height: var(--ziel-min); }
 
   .anfahrt__social-titel { font-size: var(--text-h2); }
   .social { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--raum-3); }
@@ -74,18 +75,18 @@ import { betrieb, social } from '../../data/betrieb';
     border-radius: var(--radius-m);
     transition: border-color var(--dauer-schnell) var(--kurve), transform var(--dauer-schnell) var(--kurve), box-shadow var(--dauer-schnell) var(--kurve);
   }
-  @media (hover: hover) {
+  @media (hover: hover) and (pointer: fine) {
     .social__karte:not(.social__karte--fehlt):hover { border-color: var(--farbe-marke); transform: translateY(-3px); box-shadow: var(--schatten-weich); }
   }
   .social__karte:focus-within { outline: 3px solid var(--farbe-fokus); outline-offset: 3px; }
-  @media (prefers-reduced-motion: reduce) { .social__karte:hover { transform: none !important; } }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: reduce) { .social__karte:hover { transform: none !important; } }
   .social__icon {
     width: 3rem; height: 3rem; display: inline-flex; align-items: center; justify-content: center;
     border-radius: var(--radius-rund); background: var(--farbe-marke); color: var(--farbe-text-invers);
   }
   .social__text { display: grid; }
   .social__text span { color: var(--farbe-text-leise); font-size: var(--text-sm); }
-  .social__link { display: inline-flex; width: 2.75rem; height: 2.75rem; align-items: center; justify-content: center; color: var(--farbe-marke-text); }
+  .social__link { display: inline-flex; width: var(--ziel-min); height: var(--ziel-min); align-items: center; justify-content: center; color: var(--farbe-marke-text); }
   .social__link::after { content: ''; position: absolute; inset: 0; }
   .social__link:focus-visible { outline: none; }
   .social__fehlt { font-size: var(--text-xs); color: var(--farbe-fehler); font-weight: 600; text-align: end; }

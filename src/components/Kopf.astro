@@ -25,8 +25,8 @@ const navigation = [
 ---
 <header class="kopf" data-kopf>
   <div class="kopf__innen inhalt--weit">
-    <a class="kopf__logo" href={start ? '#top' : '/'} aria-label={`${betrieb.name}, zur Startseite`}>
-      <Image src={logo} alt="" width={163} height={116} loading="eager" />
+    <a class="kopf__logo" href={start ? '#top' : '/'}>
+      <Image src={logo} alt={`${betrieb.name}, zur Startseite`} width={163} height={116} loading="eager" />
     </a>
 
     <nav class="kopf__nav" aria-label="Hauptnavigation">
@@ -112,7 +112,7 @@ const navigation = [
   .kopf__telefon {
     display: inline-flex; align-items: center; gap: var(--raum-2);
     color: var(--farbe-text); font-weight: 600; text-decoration: none; white-space: nowrap;
-    min-height: 2.75rem;
+    min-height: var(--ziel-min);
   }
   .kopf__telefon:hover { color: var(--farbe-marke-text); }
   .kopf__telefon :global(.icon) { color: var(--farbe-marke-text); }
@@ -148,7 +148,7 @@ const navigation = [
     --farbe-fokus: var(--farbe-marke-auf-dunkel);
   }
   .menue[open] { display: flex; flex-direction: column; gap: var(--raum-8); }
-  .menue::backdrop { background: rgb(28 26 25 / 0.6); }
+  .menue::backdrop { background: var(--farbe-schleier); }
   @media (prefers-reduced-motion: no-preference) {
     .menue[open] { animation: menue-ein var(--dauer-lang) var(--kurve-eintritt); }
   }
@@ -169,7 +169,7 @@ const navigation = [
   .menue__liste a:hover { color: var(--farbe-marke-auf-dunkel); }
   .menue__fuss { margin-block-start: auto; display: grid; gap: var(--raum-3); }
   .menue__fuss .btn--zweit { color: var(--farbe-text-invers); border-color: var(--farbe-text-invers-leise); }
-  .menue__fuss .btn--haupt { border-color: var(--rot-300); }
+  .menue__fuss .btn--haupt { background: var(--farbe-akzent); border-color: var(--rot-300); }
   .menue__adresse { color: var(--farbe-text-invers-leise); font-size: var(--text-sm); margin: 0; }
 
   /* Mobilbalken */

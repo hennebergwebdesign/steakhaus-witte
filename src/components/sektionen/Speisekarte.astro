@@ -28,7 +28,7 @@ const gesamt = seiten.length;
   <div class="inhalt--weit">
     <div class="kopfzeile karte__kopf">
       <h2 id="karte-titel">Die Speisekarte</h2>
-      <p class="text-leise" data-copy-vorschlag>Mittagskarte, Steaks und Desserts zum Durchblättern. Alle Preise in Euro inklusive Mehrwertsteuer.</p>
+      <p class="text-leise" data-copy-vorschlag>{gesamt} Seiten zum Umblättern, von der Mittagskarte bis zum Dessert. Alle Preise in Euro inklusive Mehrwertsteuer.</p>
     </div>
 
     <nav class="karte__kapitel" aria-label="Kapitel der Speisekarte">
@@ -138,7 +138,7 @@ const gesamt = seiten.length;
     display: flex; flex-wrap: wrap; justify-content: center; gap: var(--raum-2);
   }
   .karte__kapitel a {
-    display: inline-flex; align-items: center; min-height: 2.75rem;
+    display: inline-flex; align-items: center; min-height: var(--ziel-min);
     padding: var(--raum-2) var(--raum-4);
     border: 1px solid var(--farbe-rahmen-dunkel); border-radius: var(--radius-s);
     color: var(--farbe-text-invers); text-decoration: none; font-weight: 600;
@@ -191,17 +191,17 @@ const gesamt = seiten.length;
 
   .kartenseite__kopf { text-align: center; margin-block-end: var(--raum-6); padding-block-end: var(--raum-4); border-block-end: 2px solid var(--farbe-marke); }
   .kartenseite__kopf h3 { color: var(--farbe-marke-text); margin-block-end: var(--raum-2); }
-  .kartenseite__hinweis, .kartenseite__stand { margin: var(--raum-1) auto 0; font-size: var(--text-sm); color: var(--farbe-text-leise); max-width: 34rem; }
+  .kartenseite__hinweis, .kartenseite__stand { margin: var(--raum-1) auto 0; font-size: var(--text-sm); color: var(--farbe-text-leise); max-width: var(--breite-schmal); }
   .kartenseite__fehlt { font-weight: 600; color: var(--farbe-fehler); text-align: center; margin: var(--raum-12) auto; }
 
   .gerichte { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--raum-4); }
-  .gericht__zeile { display: flex; align-items: baseline; gap: var(--raum-2); }
-  .gericht__nr { font-size: var(--text-xs); color: var(--farbe-text-leise); font-variant-numeric: tabular-nums; min-width: 2.25rem; }
+  .gericht__zeile { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--raum-2); }
+  .gericht__nr { font-size: var(--text-xs); color: var(--farbe-text-leise); font-variant-numeric: tabular-nums; min-width: calc(var(--raum-8) + var(--raum-1)); }
   .gericht__name { font-family: var(--schrift-display); font-weight: 600; font-size: var(--text-h4); line-height: var(--zeilenhoehe-mittel); }
   .gericht__punkte { flex: 1; min-width: var(--raum-4); border-block-end: 2px dotted var(--farbe-rahmen); transform: translateY(-0.3em); }
   .gericht__preis { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--farbe-marke-text); }
   .gericht__text { margin: var(--raum-1) 0 0; font-size: var(--text-sm); color: var(--farbe-text-leise); max-width: none; }
-  .seite--art-karte .gericht:has(.gericht__nr) .gericht__text { padding-inline-start: calc(2.25rem + var(--raum-2)); }
+  .seite--art-karte .gericht:has(.gericht__nr) .gericht__text { padding-inline-start: calc(var(--raum-8) + var(--raum-1) + var(--raum-2)); }
 
   /* ---------------------------------------------------------------
      OHNE JAVASCRIPT: alle Seiten als Bögen nebeneinander, lesbar
@@ -215,18 +215,20 @@ const gesamt = seiten.length;
   /* ---------------------------------------------------------------
      MIT JAVASCRIPT: gemeinsame Basis
      --------------------------------------------------------------- */
-  .buch--aktiv { max-width: 72rem; margin-inline: auto; }
+  .buch--aktiv { max-width: var(--breite-buch); margin-inline: auto; }
   .buch--aktiv .buch__buehne { display: grid; position: relative; }
+  /* Grid-Kinder dürfen schmaler werden als ihr längstes Wort, sonst läuft die Seite bei 320 px über */
+  .buch__buehne > *, .buch__buehne .seite { min-width: 0; }
   .buch--aktiv .seite { box-shadow: var(--schatten-buch); }
 
   .buch__steuerung {
-    display: flex; align-items: center; justify-content: center; gap: var(--raum-6);
+    display: flex; align-items: center; justify-content: center; gap: var(--raum-4);
     margin-block-start: var(--raum-8);
   }
   .buch__steuerung[hidden] { display: none; }
-  .buch__stand { margin: 0; min-width: 12rem; text-align: center; color: var(--farbe-text-invers-leise); font-variant-numeric: tabular-nums; }
+  .buch__stand { margin: 0; flex: 0 1 calc(var(--raum-12) * 4); min-width: 0; text-align: center; color: var(--farbe-text-invers-leise); font-variant-numeric: tabular-nums; }
   .buch__knopf {
-    width: 3.25rem; height: 3.25rem; display: inline-flex; align-items: center; justify-content: center;
+    width: 3.25rem; height: 3.25rem; flex: none; display: inline-flex; align-items: center; justify-content: center;
     border-radius: var(--radius-rund); border: 2px solid var(--farbe-text-invers-leise);
     background: transparent; color: var(--farbe-text-invers); cursor: pointer;
     transition: background-color var(--dauer-schnell) var(--kurve), border-color var(--dauer-schnell) var(--kurve), opacity var(--dauer-schnell) var(--kurve);
@@ -262,13 +264,13 @@ const gesamt = seiten.length;
   .buch--doppel .seite--hinten::before {
     content: ''; position: absolute; inset-block: 0; width: var(--raum-12); pointer-events: none;
   }
-  .buch--doppel .seite--vorn::before { inset-inline-start: 0; background: linear-gradient(to right, rgb(0 0 0 / 0.16), transparent); }
-  .buch--doppel .seite--hinten::before { inset-inline-end: 0; background: linear-gradient(to left, rgb(0 0 0 / 0.16), transparent); }
+  .buch--doppel .seite--vorn::before { inset-inline-start: 0; background: linear-gradient(to right, var(--schatten-bund), transparent); }
+  .buch--doppel .seite--hinten::before { inset-inline-end: 0; background: linear-gradient(to left, var(--schatten-bund), transparent); }
 
   /* ---------------------------------------------------------------
      EINZELSEITE (unter 1100 px): eine Seite, die beim Wechsel umschlägt
      --------------------------------------------------------------- */
-  .buch--einzel { max-width: 36rem; }
+  .buch--einzel { max-width: var(--breite-buch-einzel); }
   .buch--einzel .blatt { display: contents; }
   .buch--einzel .seite { grid-area: 1 / 1; visibility: hidden; padding: var(--raum-6) var(--raum-6) var(--raum-12); }
   .buch--einzel .seite.ist-sichtbar { visibility: visible; }
@@ -291,7 +293,7 @@ const gesamt = seiten.length;
   }
 
   @media (max-width: 480px) {
-    .gericht__nr { min-width: 2rem; }
+    .gericht__nr { min-width: var(--raum-8); }
     .gericht__name { font-size: var(--text-base); }
   }
 </style>
@@ -301,8 +303,9 @@ const gesamt = seiten.length;
    * Zustand: bei der Doppelseite die Zahl der umgeblätterten Blätter (0 bis Blattzahl),
    * bei der Einzelseite der Index der sichtbaren Seite (0 bis Seitenzahl minus 1).
    */
-  const buch = document.querySelector<HTMLElement>('[data-buch]');
-  if (buch) {
+  const buchElement = document.querySelector<HTMLElement>('[data-buch]');
+  if (buchElement) {
+    const buch: HTMLElement = buchElement;
     const blaetter = Array.from(buch.querySelectorAll<HTMLElement>('[data-blatt]'));
     const seiten = Array.from(buch.querySelectorAll<HTMLElement>('[data-seite]'));
     const steuerung = buch.querySelector<HTMLElement>('[data-buch-steuerung]')!;

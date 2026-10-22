@@ -1,6 +1,6 @@
 # Markenbrief: Restaurant & Steakhouse Haus Witte
 
-Einzige Quelle für alles Projektspezifische. Maschinenlesbare Werte stehen in `docs/marke.json`.
+Einzige Quelle für alles Projektspezifische. Maschinenlesbare Werte stehen in `marke.json`.
 Fehlt eine Angabe, steht `[[FEHLT: …]]`, nie ein plausibel klingender Wert.
 
 Stand: 22.10.2026 · Bearbeitet von: Agentur (That's it. Marketing), Analyse ohne Kundentermin
@@ -138,8 +138,9 @@ Bewertungen nah beieinander, ein dunkler Fuß mit allen Kontaktdaten.
    Ochsenblut und Ember, abgeleitet vom Grill, nicht aus einer Bibliothek.
 3. Telefon und Ruhetag sind nie mehr als einen Daumen entfernt.
 
-**Verworfen:** Gold und Schwarz als Luxus-Steakhouse, Vollbild-Steakfoto als Held (Bild liegt nur
-in 1195 px Breite vor und ist vermutlich ein Stockfoto), Laufband mit Gerichten.
+**Verworfen:** Gold und Schwarz als Luxus-Steakhouse, Steakfoto der alten Seite als Held (trägt
+eingebrannten Schriftzug, vermutlich Stockfoto), Laufband mit Gerichten. **Gewählt:** die Fassade
+bei Nacht mit Leuchtschrift als Held (Foto des Kunden), mobil im Hochformat.
 
 ## 8 Motion-Handschrift
 
@@ -157,16 +158,9 @@ in 1195 px Breite vor und ist vermutlich ein Stockfoto), Laufband mit Gerichten.
 
 ## 10 Offene Punkte
 
-- [ ] Originalfotos in voller Auflösung (alle Bilder sind aus Screenshots ausgeschnitten, siehe `docs/BILDER.md`)
-- [ ] Logo als SVG oder in hoher Auflösung
-- [ ] vollständige Speisekarte (Steaks, Vorspeisen, Beilagen, Getränke) mit Preisen; Dessertpreise
-- [ ] aktueller Monat der Mittagskarte
-- [ ] Öffnungszeiten bestätigen
-- [ ] Facebook- und Instagram-Adresse
-- [ ] Place ID des Google-Profils (Kurzlink liegt vor: https://share.google/KOduHOILCgCd89ugi)
-- [ ] Impressum: Geschäftsführung, Registereintrag bestätigen (Verzeichnis nennt Haus Witte GmbH, HRB 13783, Amtsgericht Gelsenkirchen), USt-IdNr.
-- [ ] Wer freigibt (eine Person) und wer Rückmeldung gibt
-- [ ] Referenzrecherche und Stylescape
+Aktuelle Liste in `CLAUDE.md`, Abschnitt Offene Punkte. Seit Phase 5 liegen die Fotos des Kunden
+im Repository (`bilder-kunde/`), die Ausschnitte aus Screenshots sind bis auf Logo und
+Dessertfoto ersetzt.
 
 ## 11 Vor dem Livegang zu klären
 

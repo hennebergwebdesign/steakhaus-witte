@@ -9,10 +9,10 @@ export const VORLAUF_TAGE_MAX = 180;
 
 export type Felder = Partial<Record<'name' | 'email' | 'telefon' | 'datum' | 'uhrzeit' | 'personen' | 'datenschutz' | 'nachricht', string>>;
 
-/** heutiges Datum in Gelsenkirchen als JJJJ-MM-TT, unabhängig von der Zeitzone des Servers */
+/** heutiges Datum in Gelsenkirchen als ISO-Datum (Jahr-Monat-Tag), unabhängig von der Zeitzone des Servers */
 export function heuteBerlin(jetzt = new Date()): string {
   const teile = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' }).format(jetzt);
-  return teile; // en-CA liefert JJJJ-MM-TT
+  return teile; // en-CA liefert das ISO-Format
 }
 
 const tageZwischen = (von: string, bis: string) =>

@@ -9,7 +9,7 @@ let anfrage: Promise<Ergebnis | null> | null = null;
 
 export function laden(): Promise<Ergebnis | null> {
   anfrage ??= fetch('/api/bewertungen', { headers: { accept: 'application/json' } })
-    .then((r) => (r.ok ? (r.json() as Promise<Ergebnis>) : null))
+    .then((r) => (r.ok && r.status !== 204 ? (r.json() as Promise<Ergebnis>) : null))
     .then((d) => (d && d.anzahl > 0 ? d : null))
     .catch(() => null);
   return anfrage;

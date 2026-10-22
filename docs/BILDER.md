@@ -9,7 +9,8 @@ AVIF und WebP in passenden Breiten.
 
 | Datei | Herkunft (Upload) | Größe | Einsatz |
 |---|---|---|---|
-| `fassade-nacht.webp` | `unnamed (4).webp` | 1360 x 766 | Held, Vollbild |
+| `fassade-nacht.webp` | `unnamed (4).webp` | 1360 x 766 | Held, Vollbild ab 641 px |
+| `fassade-nacht-hoch.webp` | `unnamed (11).webp` | 765 x 1020 | Held bis 640 px, Leuchtschrift über dem Text |
 | `steak-heisser-stein.webp` | Ausschnitt aus `unnamed (2).webp` | 1320 x 548 | Speisen: Steaks. Oberer Teil mit den Gästen abgeschnitten |
 | `salatbar.webp` | `unnamed (18).webp` | 1360 x 1020 | Speisen: Mittagstisch |
 | `bar-samtbank.webp` | `unnamed (15).webp` | 1360 x 1020 | Haus, Bild 1 von 4 |
@@ -36,8 +37,7 @@ Hauses, und alle vier liegen in 1360 px vor.
 | `unnamed.jpg`, `unnamed (1).jpg`, `unnamed (2).jpg` | Vorschaubilder unter 250 px |
 | `unnamed (13).webp`, `unnamed (15).webp` (Ausschnitt) | Champagnermarke groß im Bild; die Bar bleibt, weil die Marke dort Nebensache ist |
 
-Weitere gute Motive für später: `unnamed (11).webp` (Fassade bei Nacht hochkant, für Mobil),
-`unnamed (1).webp` (Grillplatte), `unnamed (5).webp` (Schnitzel mit Kroketten), `unnamed (14).webp`
+Weitere gute Motive für später: `unnamed (1).webp` (Grillplatte), `unnamed (5).webp` (Schnitzel mit Kroketten), `unnamed (14).webp`
 und `unnamed (19).webp` (Salatbar), `unnamed (29).webp` (Lounge), `unnamed (30).webp` (Bögen
 und Theke), `unnamed (21).webp` (Weinbogen).
 

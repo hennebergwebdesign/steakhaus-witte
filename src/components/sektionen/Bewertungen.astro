@@ -70,15 +70,15 @@ const schreiben = placeId ? `https://search.google.com/local/writereview?placeid
     padding: var(--raum-6);
     transition: border-color var(--dauer-schnell) var(--kurve), transform var(--dauer-schnell) var(--kurve), box-shadow var(--dauer-schnell) var(--kurve);
   }
-  @media (hover: hover) {
+  @media (hover: hover) and (pointer: fine) {
     .rezension:hover { border-color: var(--farbe-marke); transform: translateY(-4px); box-shadow: var(--schatten-weich); }
   }
-  @media (prefers-reduced-motion: reduce) { .rezension:hover { transform: none; } }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: reduce) { .rezension:hover { transform: none; } }
   .rezension__sterne { margin: 0; color: var(--farbe-akzent); letter-spacing: 0.08em; }
   .rezension__text { margin: 0; flex: 1; display: -webkit-box; -webkit-line-clamp: 7; -webkit-box-orient: vertical; overflow: hidden; }
   .rezension__text.ist-offen { -webkit-line-clamp: unset; display: block; }
   .rezension__mehr {
-    align-self: start; background: none; border: 0; padding: var(--raum-2) 0; min-height: 2.75rem;
+    align-self: start; background: none; border: 0; padding: var(--raum-2) 0; min-height: var(--ziel-min);
     color: var(--farbe-marke-text); font-weight: 600; text-decoration: underline; cursor: pointer;
   }
   .rezension__autor { margin: 0; font-weight: 600; font-size: var(--text-sm); }

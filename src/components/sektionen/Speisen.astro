@@ -138,16 +138,18 @@ const karten = [
 
   .speise__link {
     display: inline-flex; align-items: center; gap: var(--raum-2);
-    font-weight: 600; text-decoration: none; min-height: 2.75rem;
+    font-weight: 600; text-decoration: none; min-height: var(--ziel-min);
     justify-self: start;
   }
   .speise__link :global(.icon) { transition: transform var(--dauer-schnell) var(--kurve); }
-  .speise__link:hover :global(.icon) { transform: translateX(var(--raum-1)); }
+  @media (hover: hover) and (pointer: fine) {
+    .speise__link:hover :global(.icon) { transform: translateX(var(--raum-1)); }
+  }
   /* Die ganze Karte ist klickbar, der Link bleibt das eine Fokusziel */
   .speise__link::after { content: ''; position: absolute; inset: 0; }
   .speise:focus-within { outline: 3px solid var(--farbe-fokus); outline-offset: 3px; }
   .speise__link:focus-visible { outline: none; }
-  @media (prefers-reduced-motion: reduce) {
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: reduce) {
     .speise__link:hover :global(.icon) { transform: none; }
   }
 </style>

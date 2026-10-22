@@ -148,7 +148,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .btn--haupt { background: var(--farbe-akzent); color: var(--farbe-akzent-auf); }
 .btn--haupt:hover { background: var(--farbe-akzent-hover); color: var(--farbe-akzent-auf); }
 /* Auf Holzkohle erreicht Rot als Grenze nur 2,34:1, deshalb ein heller Rand (WCAG 1.4.11). */
-.sektion--dunkel .btn--haupt, .held .btn--haupt { border-color: var(--rot-300); }
+.sektion--dunkel .btn--haupt, .held .btn--haupt { background: var(--farbe-akzent); border-color: var(--rot-300); }
 
 .btn--zweit {
   background: transparent; color: var(--farbe-text);
@@ -167,14 +167,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .kopfzeile p { font-size: var(--text-lg); }
 
 /* Bildkasten mit Zoom bei Hover, nur mit Zeiger */
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .zoomt { overflow: hidden; }
   .zoomt img { transition: transform var(--dauer-normal) var(--kurve); }
   .zoomt:hover img, .zoomt:focus-within img { transform: scale(1.04); }
   .hebt { transition: transform var(--dauer-schnell) var(--kurve), box-shadow var(--dauer-schnell) var(--kurve); }
   .hebt:hover, .hebt:focus-within { transform: translateY(-4px); box-shadow: var(--schatten-hoch); }
 }
-@media (hover: hover) and (prefers-reduced-motion: reduce) {
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: reduce) {
   .zoomt img, .zoomt:hover img, .zoomt:focus-within img { transition: none; transform: none; }
   .hebt:hover, .hebt:focus-within { transform: none; }
 }

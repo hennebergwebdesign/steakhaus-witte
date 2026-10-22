@@ -22,4 +22,6 @@ export default defineConfig({
   ],
   prefetch: { prefetchAll: true, defaultStrategy: 'viewport' },
   build: { inlineStylesheets: 'auto' },
+  // keine Quellkarten in der Auslieferung, sie geben den Quelltext heraus (pruefe-sicherheit)
+  vite: { build: { sourcemap: false } },
 });

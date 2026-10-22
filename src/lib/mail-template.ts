@@ -2,7 +2,7 @@
  * Mailtemplates im Branding von Haus Witte, nach assets/forms/mail-template.ts des Skills.
  * Tabellenlayout und Inlinestile sind Absicht: Mailprogramme können kein modernes CSS.
  * Die Farbwerte hier sind die einzige erlaubte Ausnahme von "kein Wert ohne Token" (bewusst):
- * Mailprogramme lesen keine CSS-Variablen. Sie entsprechen den Rollen in docs/marke.json.
+ * Mailprogramme lesen keine CSS-Variablen. Sie entsprechen den Rollen in marke.json.
  */
 import { betrieb } from '../data/betrieb';
 
@@ -40,7 +40,7 @@ export type Reservierung = {
   name: string;
   email: string;
   telefon: string;
-  datum: string; // JJJJ-MM-TT
+  datum: string; // ISO-Datum, Jahr-Monat-Tag
   uhrzeit: string; // HH:MM
   personen: number;
   nachricht?: string;
