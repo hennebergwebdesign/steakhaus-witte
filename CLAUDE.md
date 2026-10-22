@@ -214,6 +214,14 @@ veröffentlicht, deshalb war sie nirgends zu sehen. Der Code baut sauber (Node 2
 fehlt noch: in der Arbeitsumgebung gibt es keinen Cloudflare-Login, und eine vorläufige
 Veröffentlichung wurde von der Sicherheitsprüfung gesperrt.
 
+Erster Versuch im Dashboard am 22.10.2026 gescheitert: das Projekt wurde unter **Pages** angelegt
+und `npx wrangler deploy` als Build-Befehl eingetragen. Fehler „entry-point file
+@astrojs/cloudflare/entrypoints/server was not found“, weil Astro nie gebaut hat. Hier
+nachgestellt und bestätigt: ohne Build genau dieser Fehler, nach `pnpm build` liest der Probelauf
+90 Dateien. Lösung (in `README.md` unter „Fehlerbild“): Pages-Projekt löschen, als Worker
+importieren, Build `pnpm build`, Deploy `npx wrangler deploy`. Stand 22.10.2026 gibt es im Konto
+weiter keinen Worker `steakhaus-witte`.
+
 ## Offene Punkte
 
 Vom Kunden zu liefern oder zu bestätigen (blockiert den Livegang):
@@ -279,3 +287,6 @@ Für die Agentur:
   `assets.directory` in `wrangler.jsonc` auf `./dist/client` korrigiert, Skript `deploy` ergänzt,
   `README.md` mit den Schritten zur Veröffentlichung, Angabe zur Bewertungsroute korrigiert
   (204 statt 503).
+- **22.10.2026** Fehlgeschlagener Build bei Cloudflare ausgewertet: Pages-Projekt mit
+  `npx wrangler deploy` als Build-Befehl, Astro lief nie. Kein Codefehler. Fehlerbild und
+  richtige Einstellungen in `README.md` ergänzt.

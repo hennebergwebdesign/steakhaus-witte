@@ -37,5 +37,24 @@ pnpm run deploy
 Danach ist die Seite unter `https://steakhaus-witte.<konto>.workers.dev` erreichbar. Die
 KV-Speicher legt Wrangler beim ersten Deploy selbst an.
 
+## Fehlerbild: „entry-point file … was not found“
+
+```
+Found wrangler.json file. Reading build configuration...
+A Wrangler configuration file was found but it does not appear to be valid. Did you mean to use wrangler.toml to configure Pages?
+Executing user command: npx wrangler deploy
+✘ [ERROR] The entry-point file at "@astrojs/cloudflare/entrypoints/server" was not found.
+```
+
+Zwei Ursachen, beide in den Einstellungen bei Cloudflare, nicht im Code:
+
+1. Das Projekt wurde unter **Pages** angelegt (erkennbar an „configure Pages“ und „build
+   command exited“). Pages kann diese Seite nicht bauen. Das Pages-Projekt löschen und unter
+   Workers & Pages, Erstellen, **Worker**, Repository importieren neu anlegen (Weg 1 oben).
+2. Als Build-Befehl steht `npx wrangler deploy`, Astro baut also nie. Die Datei, auf die
+   `main` zeigt, entsteht erst mit `pnpm build`. Richtig: Build-Befehl `pnpm build`,
+   Deploy-Befehl `npx wrangler deploy`. Alternativ Build-Befehl leer und Deploy-Befehl
+   `pnpm run deploy` (baut und veröffentlicht in einem Schritt).
+
 Ohne Secrets läuft die Seite vollständig, nur Reservierung und Bewertungen weichen auf
 Telefon und Links zum Google-Profil aus.
