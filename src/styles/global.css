@@ -212,3 +212,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 /* Icons: Groesse und Strich aus den Tokens, ueberschreibt die SVG-Attribute */
 .icon { width: var(--icon-groesse); height: var(--icon-groesse); stroke-width: var(--icon-strich); flex: none; }
+
+/* Vertikaler Fluss für Rechtstexte und lange Inhalte */
+.fluss > * + * { margin-block-start: var(--raum-4); }
+.fluss > * + :is(h2, h3) { margin-block-start: var(--raum-12); }
+.fluss > :is(h2, h3) + * { margin-block-start: var(--raum-3); }
+.fluss ul { padding-inline-start: 1.25em; }

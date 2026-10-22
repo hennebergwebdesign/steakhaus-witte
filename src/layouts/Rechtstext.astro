@@ -1,0 +1,33 @@
+---
+/**
+ * Layout für Impressum und Datenschutz: noindex, nicht in der Sitemap (astro.config.mjs),
+ * lesbare Textbreite. Die Texte sind Entwürfe und keine Rechtsberatung.
+ */
+import Basis from './Basis.astro';
+interface Props { titel: string; beschreibung: string }
+const { titel, beschreibung } = Astro.props;
+---
+<Basis titel={titel} beschreibung={beschreibung} noindex>
+  <article class="sektion rechtstext">
+    <div class="inhalt fluss">
+      <p class="rechtstext__hinweis" role="note">
+        Entwurf, noch nicht anwaltlich geprüft. Markierte Stellen fehlen oder sind vom Betrieb zu bestätigen.
+      </p>
+      <slot />
+    </div>
+  </article>
+</Basis>
+
+<style>
+  .rechtstext .inhalt { max-width: 48rem; }
+  .rechtstext__hinweis {
+    padding: var(--raum-3) var(--raum-4);
+    background: var(--farbe-marke-hell);
+    border-inline-start: 4px solid var(--farbe-marke);
+    font-size: var(--text-sm);
+  }
+  .rechtstext :global(h1) { font-size: var(--text-h2); }
+  .rechtstext :global(h2) { font-size: var(--text-h4); margin-block-start: var(--raum-12); }
+  .rechtstext :global(h3) { font-size: var(--text-base); font-family: var(--schrift-text); font-weight: 600; margin-block-start: var(--raum-6); }
+  .rechtstext :global(.fehlt) { color: var(--farbe-fehler); font-weight: 600; }
+</style>

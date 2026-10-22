@@ -103,7 +103,15 @@ Skill-Vorlagen mit.
 ## Seitenstruktur
 
 Eine Startseite mit Sprungmarken (`#speisen`, `#speisekarte`, `#haus`, `#bewertungen`,
-`#reservierung`, `#anfahrt`), dazu `/impressum`, `/datenschutz`, `404`.
+`#reservierung`, `#anfahrt`), dazu `/impressum`, `/datenschutz` (beide Entwurf, noindex, nicht
+in der Sitemap), `/reservierung-gesendet` (Ergebnis ohne JavaScript, serverseitig, noindex),
+`404`. `robots.txt` wird zur Bauzeit erzeugt (`src/pages/robots.txt.ts`), Sitemap über
+`@astrojs/sitemap`. JSON-LD `Restaurant` in `src/components/JsonLd.astro`, Öffnungszeiten erst
+nach Bestätigung. Open-Graph-Bild `public/og-haus-witte.jpg` (Fassade bei Nacht mit Wortmarke).
+Security-Header in `public/_headers`, CSP vorerst nur Report-Only.
+
+SEO der Startseite: Titel „Steakhouse Haus Witte Gelsenkirchen: Steaks vom Holzkohlengrill",
+Beschreibung mit Black Ranch, Mittagstisch, Adresse und Aufforderung.
 
 ## Designsystem
 
@@ -155,7 +163,7 @@ bleibt die letzte Rückseite leer. Sprung aus anderen Sektionen: `data-karte-sei
 
 ## Stand
 
-Phase 1 bis 5 abgeschlossen. Weitere Phasen folgen, siehe Änderungsverlauf.
+Phase 1 bis 6 abgeschlossen. Weitere Phasen folgen, siehe Änderungsverlauf.
 
 ## Offene Punkte
 
@@ -186,3 +194,6 @@ vollständige Speisekarte, Öffnungszeiten bestätigen, Social-Media-Adressen, P
   Vollbild der Fassade bei Nacht, Steak auf dem heißen Stein, Salatbar, vier neue Bilder fürs
   Haus, Wortmarke auf Speisekarte und Fuß. Die Ausschnitte aus Screenshots sind entfernt,
   bis auf Logo und Dessertfoto. Upload nach `bilder-kunde/` verschoben.
+- **22.10.2026** Phase 6: Impressum und Datenschutz als markierte Entwürfe (nur laufende Dienste,
+  kein Banner-Abschnitt), 404, robots.txt mit KI-Suchcrawlern, Sitemap ohne Pflicht- und
+  Ergebnisseiten, JSON-LD Restaurant, Open-Graph-Bild, Security-Header.

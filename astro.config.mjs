@@ -17,7 +17,7 @@ export default defineConfig({
   adapter: cloudflare({ imageService: 'compile', prerenderEnvironment: 'node' }),
   integrations: [
     sitemap({
-      filter: (s) => !s.includes('/impressum') && !s.includes('/datenschutz'),
+      filter: (s) => !['/impressum', '/datenschutz', '/reservierung-gesendet'].some((p) => s.includes(p)),
     }),
   ],
   prefetch: { prefetchAll: true, defaultStrategy: 'viewport' },

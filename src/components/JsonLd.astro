@@ -1,0 +1,41 @@
+---
+/**
+ * JSON-LD Restaurant aus src/data/betrieb.ts, wortgleich mit Fuß und Impressum (NAP).
+ * Öffnungszeiten erst, wenn der Kunde sie bestätigt hat (oeffnungszeiten.bestaetigt).
+ * Keine Bewertung im Markup: die Seite ist statisch, die Zahl käme nicht aus derselben
+ * Antwort wie die Anzeige (google-bewertungen.md, Strukturierte Daten).
+ */
+import { betrieb, oeffnungszeiten, social } from '../data/betrieb';
+
+const site = Astro.site!;
+const daten: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'Restaurant',
+  '@id': new URL('/#restaurant', site).href,
+  name: betrieb.name,
+  url: site.href,
+  image: new URL('/og-haus-witte.jpg', site).href,
+  description: 'Steaks vom Holzkohlengrill aus argentinischem Black Ranch Rindfleisch, Mittagstisch mit Tagessuppe und Salatbar.',
+  telephone: betrieb.telefonIntl,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: betrieb.strasse,
+    postalCode: betrieb.plz,
+    addressLocality: betrieb.ort,
+    addressCountry: 'DE',
+  },
+  servesCuisine: ['Steakhouse', 'Grill'],
+  acceptsReservations: true,
+  hasMenu: new URL('/#speisekarte', site).href,
+  hasMap: betrieb.routenplaner,
+  foundingDate: String(betrieb.seit),
+};
+if (oeffnungszeiten.bestaetigt) {
+  daten.openingHoursSpecification = oeffnungszeiten.zeilen.flatMap((z) =>
+    (z.schema ?? []).map((s) => ({ '@type': 'OpeningHoursSpecification', dayOfWeek: s.tage, opens: s.von, closes: s.bis }))
+  );
+}
+const profile = social.map((s) => s.url).filter((u): u is string => Boolean(u) && !u!.includes('share.google'));
+if (profile.length) daten.sameAs = profile;
+---
+<script type="application/ld+json" set:html={JSON.stringify(daten)} />

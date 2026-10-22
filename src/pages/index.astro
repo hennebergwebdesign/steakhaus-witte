@@ -1,5 +1,6 @@
 ---
 import Basis from '../layouts/Basis.astro';
+import JsonLd from '../components/JsonLd.astro';
 import Held from '../components/sektionen/Held.astro';
 import Speisen from '../components/sektionen/Speisen.astro';
 import Qualitaet from '../components/sektionen/Qualitaet.astro';
@@ -15,6 +16,7 @@ import Anfahrt from '../components/sektionen/Anfahrt.astro';
   beschreibung="Steaks vom Holzkohlengrill aus argentinischem Black Ranch Rindfleisch, Mittagstisch mit Salatbar. Ückendorfer Straße 205, Gelsenkirchen. Tisch reservieren."
   start
 >
+  <JsonLd slot="kopf" />
   <Held />
   <BewertungsLeiste />
   <Speisen />
