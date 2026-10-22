@@ -42,7 +42,15 @@ Ordner: `node ../Design-Skill/scripts/pruefe-<name>.mjs`.
 
 **Cloudflare Workers mit statischen Assets, nicht Pages.** Grund: `@astrojs/cloudflare` ab
 Version 13 baut nur noch für Workers. Konfiguration in `wrangler.jsonc`. Deploy:
-`pnpm build && npx wrangler deploy`. Node-Version in Cloudflare über `NODE_VERSION=24`.
+`pnpm run deploy` (baut und ruft `wrangler deploy`). Node-Version in Cloudflare über
+`NODE_VERSION=24`; mit Node 22 unter 22.23.4 bricht Astro 7 den Build ab. Ein Projekt unter
+„Pages“ zeigt nur eine leere Seite, weil die Startseite in `dist/client` liegt. Schritte für
+das Dashboard stehen in `README.md`.
+
+`wrangler.jsonc` zeigt mit `assets.directory` auf `./dist/client`, nie auf `./dist` (sonst
+ginge der Worker-Code in `dist/server` als öffentliche Datei raus). Nach `pnpm build` nutzt
+Wrangler ohnehin die erzeugte `dist/server/wrangler.json` (Umleitung über
+`.wrangler/deploy/config.json`).
 
 | Binding | Zweck | Fehlt es |
 |---|---|---|
@@ -67,8 +75,8 @@ Astro 7 prüft Cross-Site-POSTs selbst (`Cross-site POST form submissions are fo
 eigene Origin-Prüfung bleibt zusätzlich.
 
 Bewertungen: `GET /api/bewertungen` holt Google Places serverseitig, Cache 24 h in KV, letzter
-Stand als Rückfall. Ohne Schlüssel oder Place ID antwortet sie 503, die Seite zeigt dann nur
-Links zum Profil. Keine Zahl im Code, kein JSON-LD mit Bewertung (die Seite ist statisch).
+Stand als Rückfall. Ohne Schlüssel oder Place ID antwortet sie 204 (Grund im Header
+`x-bewertungen`), die Seite zeigt dann still nur Links zum Profil. Keine Zahl im Code, kein JSON-LD mit Bewertung (die Seite ist statisch).
 
 Getestet am 22.10.2026 in der Worker-Vorschau (`astro preview`): fehlende Variablen (503 mit
 Telefon), fremde Herkunft (403), Honigtopf (200 ohne Versand), Weiterleitung ohne JavaScript
@@ -199,6 +207,13 @@ Netz (nur lokal), Bildschirmleser von Hand. Kein Mensch hat die Seite abgenommen
 
 Phase 1 bis 7 abgeschlossen: gebaut und geprüft, nicht abgenommen und nicht live.
 
+Am 22.10.2026 nachgeprüft: Im Cloudflare-Konto der Agentur gibt es keinen Worker
+`steakhaus-witte`, auf GitHub keinen Build und keine Deploy-Verbindung. Die Seite war also nie
+veröffentlicht, deshalb war sie nirgends zu sehen. Der Code baut sauber (Node 24), der Probelauf
+`wrangler deploy --dry-run` liest 90 Dateien aus `dist/client`, Upload 759 KiB. Der Deploy selbst
+fehlt noch: in der Arbeitsumgebung gibt es keinen Cloudflare-Login, und eine vorläufige
+Veröffentlichung wurde von der Sicherheitsprüfung gesperrt.
+
 ## Offene Punkte
 
 Vom Kunden zu liefern oder zu bestätigen (blockiert den Livegang):
@@ -218,6 +233,8 @@ Für die Agentur:
 
 * Referenzrecherche auf einer Premium-Designquelle und Stylescape: nicht gelaufen, weil fremde Seiten aus der Arbeitsumgebung nicht abrufbar waren. Kandidaten vor einem Abruf vorlegen (Tor 1).
 * Quellskills aus Phase 0 nicht installiert (keine Zustimmung eingeholt).
+* Erster Deploy: Repository im Cloudflare Dashboard als Worker importieren oder `pnpm run deploy`
+  mit Login (Schritte in `README.md`). Bis dahin ist die Seite nicht im Netz.
 * Deploy: Cloudflare-Konto, Secrets setzen (`wrangler secret put …`), Domain umziehen, Weiterleitungen der alten URLs (alte Seitenstruktur unbekannt, Inventar fehlt).
 * CSP von Report-Only auf scharf, nachdem eine Woche keine Verstöße kamen.
 
@@ -256,3 +273,9 @@ Für die Agentur:
   Verlassen das Formular verschob (jetzt Prüfung beim Absenden, Korrektur beim Tippen), und
   mobil zu wenig Kontrast im Held (jetzt Hochformatfoto mit Leuchtschrift über dem Text,
   gemessen 6,0:1). `marke.json` liegt jetzt im Wurzelverzeichnis, dort finden die Prüfskripte sie.
+- **22.10.2026** Nachprüfung „keine Seite zu finden“: Seite war nie veröffentlicht (kein Worker
+  bei Cloudflare, keine Deploy-Verbindung auf GitHub). Build mit Node 24 und Worker-Vorschau
+  geprüft, Screenshots bei 1440 und 375 px ohne Fehler in der Konsole, alle Bilder laden.
+  `assets.directory` in `wrangler.jsonc` auf `./dist/client` korrigiert, Skript `deploy` ergänzt,
+  `README.md` mit den Schritten zur Veröffentlichung, Angabe zur Bewertungsroute korrigiert
+  (204 statt 503).
