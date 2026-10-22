@@ -81,10 +81,24 @@ Tokens in `src/styles/tokens.css`, abgeleitet aus `docs/marke.json`. Globale Bas
 | `src/components/sektionen/Speisen.astro` | Steak groß als Glutfläche, Mittagstisch und Desserts mit Foto, Sprung in die Karte |
 | `src/components/sektionen/Qualitaet.astro` | gelieferter Text zu Black Ranch, drei Merkmale |
 | `src/components/sektionen/Haus.astro` | die vier Bilder, versetzt |
+| `src/components/sektionen/Speisekarte.astro` | Speisekarte als Buch (eigener Abschnitt, Signaturbewegung), Daten aus `src/data/speisekarte.ts` |
+
+### Speisekarte als Buch
+
+Eigenbau ohne Bibliothek. Gründe: ohne JavaScript bleiben alle Seiten als Papierbögen lesbar,
+der Text ist echtes HTML (Suche, Vorleser), Tastatur, Wischen und reduzierte Bewegung sind
+abgedeckt, verdeckte Seiten sind `inert`. Ab 1100 px Doppelseite mit 3D-Umblättern um den
+Bund, darunter eine Seite, die beim Wechsel umschlägt. Je zwei Seiten aus `seiten` bilden ein
+Blatt; die Klasse `seite--hinten` ist die Rückseite eines Blatts, `seite--art-rueck` die
+Rückseite des Buchs (nicht verwechseln, das war ein Fehler im ersten Wurf).
+
+Pflege: Gerichte und Preise nur in `src/data/speisekarte.ts`. Preis `null` erscheint als
+`[[FEHLT: Preis]]`. Eine neue Seite ist ein neuer Eintrag im Array; bei ungerader Seitenzahl
+bleibt die letzte Rückseite leer. Sprung aus anderen Sektionen: `data-karte-seite="<id>"`.
 
 ## Stand
 
-Phase 1 bis 3 abgeschlossen. Weitere Phasen folgen, siehe Änderungsverlauf.
+Phase 1 bis 4 abgeschlossen. Weitere Phasen folgen, siehe Änderungsverlauf.
 
 ## Offene Punkte
 
@@ -106,3 +120,6 @@ vollständige Speisekarte, Öffnungszeiten bestätigen, Social-Media-Adressen, P
   eingebrannten Schriftzug „THE BEST SINCE 1999“; verwendet wird nur der rechte Ausschnitt ohne
   Schrift (460 px). Deshalb Text links und Bild rechts im Held und die Steakkarte als Glutfläche
   ohne Foto. Eigene Kurve `--text-held`, damit die Überschrift ab 1100 px zweizeilig bleibt.
+- **22.10.2026** Phase 4: Speisekarte als Buch mit Deckblatt, Mittagskarte (sechs Gerichte mit
+  Preisen aus dem Screenshot), Steaks und Beilagen (fehlen, als FEHLT markiert), Desserts (neun
+  Gerichte, Preise fehlen), Rückseite mit Ruhetag. Kapitelleiste, Sprünge aus den Speisen.
