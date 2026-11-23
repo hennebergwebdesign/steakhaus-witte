@@ -279,3 +279,5 @@ Für die Agentur:
   `assets.directory` in `wrangler.jsonc` auf `./dist/client` korrigiert, Skript `deploy` ergänzt,
   `README.md` mit den Schritten zur Veröffentlichung, Angabe zur Bewertungsroute korrigiert
   (204 statt 503).
+
+Stand SEO: Das Impressum ist indexierbar (kein noindex) und steht in der Sitemap. Nicht wieder auf noindex setzen.
