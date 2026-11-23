@@ -280,4 +280,6 @@ Für die Agentur:
   `README.md` mit den Schritten zur Veröffentlichung, Angabe zur Bewertungsroute korrigiert
   (204 statt 503).
 
+**23.11.2026** Impressum: Abschnitt "Webdesign und Umsetzung" mit Agenturhinweis (Link thatsit.marketing, rel noopener). Fuss: "Made by That's it. Marketing" unter dem Copyright (target _blank, rel noopener).
+
 Stand SEO: Das Impressum ist indexierbar (kein noindex) und steht in der Sitemap. Nicht wieder auf noindex setzen.
